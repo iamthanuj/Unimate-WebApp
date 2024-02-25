@@ -1,17 +1,110 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { register, reset } from "../features/auth/authSlice";
+import { PuffLoader } from "react-spinners/";
 
 function Register({ logToggle }) {
+  const [registerData, setRegisterData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    university: "",
+    avatar: "",
+    password: "",
+    password2: "",
+  });
+
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    university,
+    password,
+    password2,
+    avatar,
+  } = registerData;
+
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, dispatch]);
+
+  const onChange = (e) => {
+    setRegisterData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== password2) {
+      toast.error("Password do not match");
+    } else {
+      // const formData = new FormData();
+      // formData.append("firstName", firstName);
+      // formData.append("lastName", lastName);
+      // formData.append("email", email);
+      // formData.append("phone", phone);
+      // formData.append("university", university);
+      // formData.append("avatar", avatar);
+
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        university,
+        avatar,
+        password,
+      };
+
+      dispatch(register(userData));
+
+      setRegisterData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        password2: "",
+      });
+    }
+  };
+
+  if (isLoading) {
+    return <PuffLoader color="#E81F03" size={60} className="mx-auto" />;
+  }
+
   return (
     <div>
-      <form className="max-w-md mx-auto font-inter">
+      <form className="max-w-md mx-auto font-inter" onSubmit={onSubmit}>
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="email"
-            name="floating_email"
+            name="email"
+            value={email}
             id="floating_email"
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
+            onChange={onChange}
           />
           <label
             htmlFor="floating_email"
@@ -23,11 +116,13 @@ function Register({ logToggle }) {
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="password"
-            name="floating_password"
+            name="password"
+            value={password}
             id="floating_password"
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
+            onChange={onChange}
           />
           <label
             htmlFor="floating_password"
@@ -39,11 +134,13 @@ function Register({ logToggle }) {
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="password"
-            name="repeat_password"
+            name="password2"
+            value={password2}
             id="floating_repeat_password"
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
+            onChange={onChange}
           />
           <label
             htmlFor="floating_repeat_password"
@@ -56,11 +153,13 @@ function Register({ logToggle }) {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="text"
-              name="floating_first_name"
+              name="firstName"
+              value={firstName}
               id="floating_first_name"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
+              onChange={onChange}
             />
             <label
               htmlFor="floating_first_name"
@@ -72,11 +171,13 @@ function Register({ logToggle }) {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="text"
-              name="floating_last_name"
+              name="lastName"
+              value={lastName}
               id="floating_last_name"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
+              onChange={onChange}
             />
             <label
               htmlFor="floating_last_name"
@@ -90,12 +191,13 @@ function Register({ logToggle }) {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="tel"
-              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-              name="floating_phone"
+              name="phone"
+              value={phone}
               id="floating_phone"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
+              onChange={onChange}
             />
             <label
               htmlFor="floating_phone"
@@ -107,11 +209,13 @@ function Register({ logToggle }) {
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="text"
-              name="floating_company"
+              name="university"
+              value={university}
               id="floating_company"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
+              onChange={onChange}
             />
             <label
               htmlFor="floating_company"
@@ -120,6 +224,22 @@ function Register({ logToggle }) {
               University
             </label>
           </div>
+        </div>
+        <div></div>
+        <div className="h-20">
+          <label
+            className="block mb-2 text-sm font-medium text-black"
+            htmlFor="file_input"
+          >
+            Upload Profile Picture
+          </label>
+          <input
+            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            id="file_input"
+            name="avatar"
+            type="file"
+            onChange={onChange}
+          />
         </div>
         <div className="flex justify-center">
           <button

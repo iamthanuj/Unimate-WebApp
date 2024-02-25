@@ -21,7 +21,6 @@ app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}))
 app.use(express.urlencoded({extended: false}))
 app.use(morgan("common"))
 app.use(cors())
-app.use("/assets", express.static(path.join(__dirname, 'public/aasets')))
 
 
 app.use('/api/posts', require('./routes/postRoutes'))

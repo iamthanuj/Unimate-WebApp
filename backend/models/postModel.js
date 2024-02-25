@@ -12,6 +12,11 @@ const postSchema = mongoose.Schema(
       required: true,
     },
 
+    authorImage:{
+      type: String,
+      required:true,
+    },
+
     title: {
       type: String,
       required: [true, "Please add a title "],
@@ -26,6 +31,15 @@ const postSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a image"],
     },
+
+    likes :{
+      type: Map,
+      of: Boolean
+    },
+    comments :{
+      type : Array,
+      default:[]
+    }
   },
   {
     timestamps: true,

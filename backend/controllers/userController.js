@@ -135,11 +135,18 @@ const getUserFriends = asyncHandler(async (req, res) => {
     user.friends.map((id) => User.findById(id))
   );
 
-  const formattedFriends = friends.map(
+  const formattedFriends =  Promise.all( friends.map(
     ({ _id, firstName, lastName, email, phone, university, avatar }) => {
-      return { _id, firstName, lastName, email, phone, university, avatar };
+      
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: avatar,
+      };
+      const command = new GetObjectCommand(getObjectParams);
+      const url =  getSignedUrl(s3, command, { expiresIn: 3600 });
+      return { _id, firstName, lastName, email, phone, university, url };
     }
-  );
+  ));
 
   res.status(200).json(formattedFriends);
 });

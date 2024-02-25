@@ -1,13 +1,38 @@
 const asyncHandler = require("express-async-handler");
+const crypto = require("crypto");
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
+
+//s3 config
+const { s3, bucketName } = require("../config/s3");
+const {
+  PutObjectCommand,
+  GetObjectCommand,
+  S3Client,
+} = require("@aws-sdk/client-s3");
+
+//s3 image url making config
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 //@desc Get posts
 //@route GET/api/posts
 //@access private
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
-  res.status(200).json(posts);
+
+  const formattedPosts = Promise.all(posts.map(({
+    author,authorImage,title, description, image, likes, comments
+  })=>{
+    const getObjectParams = {
+      Bucket: bucketName,
+      Key: authorImage,
+    };
+    const command = new GetObjectCommand(getObjectParams);
+      const url =  getSignedUrl(s3, command, { expiresIn: 3600 });
+      return {author, authorImage, title, description, image, likes, comments}
+  }))
+
+  res.status(200).json(formattedPosts);
 });
 
 //@desc Get posts
@@ -27,13 +52,28 @@ const createPost = asyncHandler(async (req, res) => {
     throw new Error("Please add a text");
   }
 
+  const generatedImageName = randomImageName();
+
   const post = await Post.create({
     user: req.user.id,
     author: `${req.user.firstName} ${req.user.lastName}`,
+    authorImage : req.user.avatar,
     title: req.body.title,
     description: req.body.description,
-    image: req.body.image,
+    image: generatedImageName,
+    likes: {},
+    comments: [],
   });
+
+  //upload image
+  const prams = {
+    Bucket: bucketName,
+    Key: generatedImageName,
+    Body: req.file.buffer,
+    ContentType: req.file.mimetype,
+  };
+  const command = new PutObjectCommand(prams);
+  await s3.send(command);
 
   res.status(200).json(post);
 });
@@ -98,6 +138,10 @@ const deletePost = asyncHandler(async (req, res) => {
   await Post.deleteOne();
   res.status(200).json({ id: req.params.id });
 });
+
+//Generate RND image name
+const randomImageName = (bytes = 32) =>
+  crypto.randomBytes(bytes).toString("hex");
 
 module.exports = {
   getAllPosts,
