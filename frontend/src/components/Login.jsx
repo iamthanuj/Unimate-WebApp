@@ -1,17 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { login, reset } from "../features/auth/authSlice";
+import { PuffLoader } from "react-spinners/";
 
 function Login({ logToggle }) {
+  const [loginFormData, setLoginFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = loginFormData;
+
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
+      console.log("User login Successfull!");
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, dispatch]);
+
+  const onChange = (e) => {
+    setLoginFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const userData = {
+      email,
+      password,
+    };
+
+    dispatch(login(userData));
+  };
+
+  if (isLoading) {
+    return <PuffLoader color="#E81F03" size={60} className="mx-auto" />;
+  }
+
   return (
     <div>
-      <form className="max-w-md mx-auto font-inter">
+      <form className="max-w-md mx-auto font-inter" onSubmit={onSubmit}>
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="email"
-            name="floating_email"
+            name="email"
             id="floating_email"
+            value={email}
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
+            onChange={onChange}
           />
           <label
             htmlFor="floating_email"
@@ -23,11 +75,13 @@ function Login({ logToggle }) {
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="password"
-            name="floating_password"
+            name="password"
             id="floating_password"
+            value={password}
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
+            onChange={onChange}
           />
           <label
             htmlFor="floating_password"

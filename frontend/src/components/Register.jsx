@@ -12,7 +12,7 @@ function Register({ logToggle }) {
     email: "",
     phone: "",
     university: "",
-    avatar: "",
+    avatar: null,
     password: "",
     password2: "",
   });
@@ -46,10 +46,15 @@ function Register({ logToggle }) {
   }, [user, isError, isSuccess, message, dispatch]);
 
   const onChange = (e) => {
-    setRegisterData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+    if (e.target.name === "avatar") {
+      // Handle file input separately
+      setRegisterData({ ...registerData, avatar: e.target.files[0] });
+    } else {
+      setRegisterData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
+    }
   };
 
   const onSubmit = async (e) => {
@@ -58,25 +63,18 @@ function Register({ logToggle }) {
     if (password !== password2) {
       toast.error("Password do not match");
     } else {
-      // const formData = new FormData();
-      // formData.append("firstName", firstName);
-      // formData.append("lastName", lastName);
-      // formData.append("email", email);
-      // formData.append("phone", phone);
-      // formData.append("university", university);
-      // formData.append("avatar", avatar);
+ 
 
-      const userData = {
-        firstName,
-        lastName,
-        email,
-        phone,
-        university,
-        avatar,
-        password,
-      };
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      formData.append("university", university);
+      formData.append("avatar", avatar);
+      formData.append("password", password);
 
-      dispatch(register(userData));
+      dispatch(register(formData));
 
       setRegisterData({
         firstName: "",
@@ -84,6 +82,7 @@ function Register({ logToggle }) {
         email: "",
         password: "",
         password2: "",
+        avatar: null, 
       });
     }
   };

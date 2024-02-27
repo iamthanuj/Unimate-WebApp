@@ -40,6 +40,8 @@ const registerUser = asyncHandler(async (req, res) => {
   //image
   const generatedAvatar = randomAvatarName();
 
+  console.log(req.file.buffer);
+
   //create user
   const user = await User.create({
     firstName,
@@ -66,10 +68,10 @@ const registerUser = asyncHandler(async (req, res) => {
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
+
     const command = new PutObjectCommand(prams);
     await s3.send(command);
-
-
+    
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -135,18 +137,19 @@ const getUserFriends = asyncHandler(async (req, res) => {
     user.friends.map((id) => User.findById(id))
   );
 
-  const formattedFriends =  Promise.all( friends.map(
-    ({ _id, firstName, lastName, email, phone, university, avatar }) => {
-      
-      const getObjectParams = {
-        Bucket: bucketName,
-        Key: avatar,
-      };
-      const command = new GetObjectCommand(getObjectParams);
-      const url =  getSignedUrl(s3, command, { expiresIn: 3600 });
-      return { _id, firstName, lastName, email, phone, university, url };
-    }
-  ));
+  const formattedFriends = Promise.all(
+    friends.map(
+      ({ _id, firstName, lastName, email, phone, university, avatar }) => {
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: avatar,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = getSignedUrl(s3, command, { expiresIn: 3600 });
+        return { _id, firstName, lastName, email, phone, university, url };
+      }
+    )
+  );
 
   res.status(200).json(formattedFriends);
 });
