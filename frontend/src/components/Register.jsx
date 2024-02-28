@@ -29,6 +29,7 @@ function Register({ logToggle }) {
   } = registerData;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
@@ -40,6 +41,7 @@ function Register({ logToggle }) {
     }
 
     if (isSuccess || user) {
+      navigate("/home")
     }
 
     dispatch(reset());

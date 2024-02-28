@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { login, reset } from "../features/auth/authSlice";
 import { PuffLoader } from "react-spinners/";
+import { useNavigate } from "react-router-dom";
 
 function Login({ logToggle }) {
   const [loginFormData, setLoginFormData] = useState({
@@ -13,6 +14,7 @@ function Login({ logToggle }) {
   const { email, password } = loginFormData;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
@@ -24,7 +26,7 @@ function Login({ logToggle }) {
     }
 
     if (isSuccess || user) {
-      console.log("User login Successfull!");
+      navigate("/home")
     }
 
     dispatch(reset());

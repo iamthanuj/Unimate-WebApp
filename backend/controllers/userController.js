@@ -54,13 +54,6 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json({
-      _id: user.id,
-      firstName: user.firstName,
-      email: user.email,
-      token: generateToken(user._id),
-    });
-
     //upload avatar
     const prams = {
       Bucket: bucketName,
@@ -71,7 +64,22 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const command = new PutObjectCommand(prams);
     await s3.send(command);
-    
+
+     //get avatar url
+     const getObjectParams = {
+      Bucket: bucketName,
+      Key: user.avatar,
+    };
+    const getImage = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, getImage, { expiresIn: 3600 });
+
+    res.status(201).json({
+      _id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      token: generateToken(user._id),
+      avatar:url
+    });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -88,11 +96,20 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
+    //get avatar url
+    const getObjectParams = {
+      Bucket: bucketName,
+      Key: user.avatar,
+    };
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
     res.json({
       _id: user.id,
-      firstName: user.firstName,
+      name: `${user.firstName} ${user.lastName} `,
       email: user.email,
       token: generateToken(user._id),
+      avatar: url,
     });
   } else {
     res.status(400);
