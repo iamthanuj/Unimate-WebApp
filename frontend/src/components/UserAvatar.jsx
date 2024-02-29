@@ -32,11 +32,11 @@ function UserAvatar() {
       >
         <span className="sr-only">Open user menu</span>
         <img
-          className="w-10 h-10 me-2 rounded-full"
+          className="w-10 h-10 me-2 rounded-full object-cover"
           src={user.avatar}
           alt="user photo"
         />
-        {user.name}
+        <p className="text-[16px]">{user.name}</p>
         <svg
           className="w-2.5 h-2.5 ms-3 mr-2.5"
           aria-hidden="true"
@@ -62,7 +62,7 @@ function UserAvatar() {
         >
           <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
             <div className="font-medium">Student</div>
-            <div className="truncate">thanuj@gmail.com</div>
+            <div className="truncate">{user.email}</div>
           </div>
           <ul
             className="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -73,7 +73,7 @@ function UserAvatar() {
                 href="#"
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
-                Dashboard
+                Profile
               </a>
             </li>
             <li>
