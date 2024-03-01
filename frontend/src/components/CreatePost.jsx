@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FaRegImage } from "react-icons/fa6";
-import { createPost, reset } from "../features/post/postSlice";
+import { createPost, postReset } from "../features/post/postSlice";
 import { PuffLoader } from "react-spinners/";
 import { toast } from "react-toastify";
 
@@ -17,6 +17,7 @@ function CreatePost() {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
+  const {isLoadingPost, isSuccessPost} = useSelector((state)=>state.post);
 
   const onChange = (e) => {
     if (e.target.name === "image") {
@@ -29,6 +30,8 @@ function CreatePost() {
       }));
     }
   };
+
+
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -45,14 +48,18 @@ function CreatePost() {
         description: "",
         image: null,
       });
+
+      if(isSuccessPost){
+        toast.success("Post Published")
+      }
+
+      dispatch(postReset())
     } else {
       toast.error("Pleas add text or image");
     }
   };
 
-  // if (isLoading) {
-  //   return <PuffLoader color="#E81F03" size={60} className="mx-auto" />;
-  // }
+
 
   return (
     <div className="bg-gray-50  shadow-md rounded-lg font-inter">

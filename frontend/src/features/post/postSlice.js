@@ -4,10 +4,10 @@ import postService from "./postService";
 const initialState = {
   posts: [],
   allPosts:[],
-  isError: false,
-  isSuccess: false,
-  isLoading: false,
-  message: "",
+  isErrorPost: false,
+  isSuccessPost: false,
+  isLoadingPost: false,
+  messagePost: "",
 };
 
 // Create new post
@@ -93,64 +93,65 @@ export const postSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
-    reset: (state) => initialState,
+    postReset: (state) => initialState,
   },
   extraReducers: (builder) => {
     builder
       .addCase(createPost.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingPost = true;
       })
 
       .addCase(createPost.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
+        state.isLoadingPost = false;
+        state.isSuccessPost = true;
         state.posts.push(action.payload);
       })
 
       .addCase(createPost.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
+        state.isLoadingPost = false;
+        state.isSuccessPost = false;
+        state.isErrorPost = true;
+        state.messagePost = action.payload;
       })
 
       //get posts
       .addCase(getPosts.pending, (state) => {
-        state.isLoading = true
+        state.isLoadingPost = true
       })
 
       .addCase(getPosts.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.isSuccess = true
+        state.isLoadingPost = false
+        state.isSuccessPost = true
         state.posts = action.payload
       })
 
       .addCase(getPosts.rejected, (state, action) => {
-        state.isLoading = false
-        state.isError = true
-        state.message = action.payload
+        state.isLoadingPost = false
+        state.isErrorPost = true
+        state.messagePost = action.payload
       })
 
       //get all posts
 
       .addCase(getAllPosts.pending, (state)=>{
-        state.isLoading = true
+        state.isLoadingPost = true
       })
 
       .addCase(getAllPosts.fulfilled, (state,action)=>{
-        state.isLoading = false
-        state.isSuccess = true
+        state.isLoadingPost = false
+        state.isSuccessPost = true
         state.allPosts = action.payload
       })
 
       .addCase(getAllPosts.rejected, (state, action)=>{
-        state.isLoading = false
-        state.isError = true
-        state.message = action.payload
+        state.isLoadingPost = false
+        state.isErrorPost = true
+        state.messagePost = action.payload
       })
   },
 });
 
 
 
-export const { reset } = postSlice.actions
+export const { postReset } = postSlice.actions
 export default postSlice.reducer

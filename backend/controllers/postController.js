@@ -22,21 +22,31 @@ const getAllPosts = asyncHandler(async (req, res) => {
 
   const formattedPosts = await Promise.all(
     posts.map(async ({ author, authorImage, title, description, image, likes, comments }) => {
+
+      //auther image
       const getObjectParams = {
         Bucket: bucketName,
         Key: authorImage,
       };
       const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
+      //pos image
+      const getObjectParamsPost = {
+        Bucket: bucketName,
+        Key: image,
+      };
+      const commandPost = new GetObjectCommand(getObjectParamsPost);
+      const postUrl = await getSignedUrl(s3, commandPost, { expiresIn: 3600 });
 
       
       return {
         author,
-        authorImage: url,
+        
+        authorImage: authorUrl,
         title,
         description,
-        image,
+        image: postUrl,
         likes,
         comments,
       };

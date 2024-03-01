@@ -5,31 +5,32 @@ import NavBar from "../components/NavBar";
 import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
 import { toast } from "react-toastify";
-import { getAllPosts, reset } from "../features/post/postSlice";
+import { getAllPosts, postReset } from "../features/post/postSlice";
 
 function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const { allPosts, isLoading, isError, message } = useSelector(
-    (state) => state.post
-  );
+  const { allPosts, isErrorPost, messagePost } =
+    useSelector((state) => state.post);
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
+    if (isErrorPost) {
+      console.log(messagePost)
     }
 
     if (!user) {
-      navigate("/");
+      navigate('/');
     }
 
-    dispatch(getAllPosts())
+    dispatch(getAllPosts());
 
+    return()=>{
+      dispatch(postReset())
+    }
 
-  },[user, navigate, isError, message, dispatch]);
-
+  }, [user, navigate, isErrorPost, , messagePost, dispatch]);
 
   return (
     <div>
@@ -37,7 +38,9 @@ function HomePage() {
       <div className="flex justify-center">
         <div className="pt-[100px] flex flex-col gap-14 ">
           <CreatePost />
-          <Post />
+          {allPosts.map((post) => (
+            <Post key={post.id} allPostsDetails={post} /> // Use unique post ID as key
+          ))}
         </div>
       </div>
     </div>
