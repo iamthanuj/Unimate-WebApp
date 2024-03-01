@@ -4,7 +4,7 @@ import UserAvatar from './UserAvatar'
 
 function NavBar() {
   return (
-    <div className='fixed w-full bg-secendoryColor h-[80px] flex items-center'>
+    <div className='fixed w-full bg-gradient-to-r from-mainColor to-secendoryColor h-[80px] flex items-center'>
         <div className='container mx-auto flex items-center justify-between'>
 
             {/* Logo */}

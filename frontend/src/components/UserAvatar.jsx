@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import avatar from "../assets/drake.jpg";
-import { useNavigate } from "react-router-dom";
 import { logout, reset } from "../features/auth/authSlice";
 
 function UserAvatar() {
@@ -11,14 +9,14 @@ function UserAvatar() {
     setIsDropdownOpen((prevState) => !prevState);
   };
 
-  const navigate = useNavigate();
+
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   const onLogout = () => {
-    dispatch(logout());
     dispatch(reset());
+    dispatch(logout());
   };
 
   return (

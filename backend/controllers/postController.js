@@ -20,17 +20,28 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
 
-  const formattedPosts = Promise.all(posts.map(({
-    author,authorImage,title, description, image, likes, comments
-  })=>{
-    const getObjectParams = {
-      Bucket: bucketName,
-      Key: authorImage,
-    };
-    const command = new GetObjectCommand(getObjectParams);
-      const url =  getSignedUrl(s3, command, { expiresIn: 3600 });
-      return {author, authorImage, title, description, image, likes, comments}
-  }))
+  const formattedPosts = await Promise.all(
+    posts.map(async ({ author, authorImage, title, description, image, likes, comments }) => {
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: authorImage,
+      };
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+
+      
+      return {
+        author,
+        authorImage: url,
+        title,
+        description,
+        image,
+        likes,
+        comments,
+      };
+    })
+  );
 
   res.status(200).json(formattedPosts);
 });
@@ -47,35 +58,37 @@ const getUserPosts = asyncHandler(async (req, res) => {
 //@route POST /api/posts/ceate
 //@access private
 const createPost = asyncHandler(async (req, res) => {
-  if (!req.body.title || !req.body.description || !req.body.image) {
+  if (!req.body.title || !req.body.description) {
     res.status(400);
     throw new Error("Please add a text");
+  } else {
+    const generatedImageName = randomImageName();
+
+    const post = await Post.create({
+      user: req.user.id,
+      author: `${req.user.firstName} ${req.user.lastName}`,
+      authorImage: req.user.avatar,
+      title: req.body.title,
+      description: req.body.description,
+      image: generatedImageName,
+      likes: {},
+      comments: [],
+    });
+
+    console.log(req.file.buffer);
+
+    //upload image
+    const prams = {
+      Bucket: bucketName,
+      Key: generatedImageName,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
+    const command = new PutObjectCommand(prams);
+    await s3.send(command);
+
+    res.status(200).json(post);
   }
-
-  const generatedImageName = randomImageName();
-
-  const post = await Post.create({
-    user: req.user.id,
-    author: `${req.user.firstName} ${req.user.lastName}`,
-    authorImage : req.user.avatar,
-    title: req.body.title,
-    description: req.body.description,
-    image: generatedImageName,
-    likes: {},
-    comments: [],
-  });
-
-  //upload image
-  const prams = {
-    Bucket: bucketName,
-    Key: generatedImageName,
-    Body: req.file.buffer,
-    ContentType: req.file.mimetype,
-  };
-  const command = new PutObjectCommand(prams);
-  await s3.send(command);
-
-  res.status(200).json(post);
 });
 
 //@desc update posts

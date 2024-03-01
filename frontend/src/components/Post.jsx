@@ -3,7 +3,7 @@ import { BiLike,BiSolidLike,BiCommentDetail , BiShare, BiDotsVerticalRounded   }
 
 function Post() {
   return (
-    <div className="max-w-md bg-white rounded-lg overflow-hidden shadow-md font-inter">
+    <div className="max-w-md bg-blue-50 rounded-lg overflow-hidden shadow-md font-inter">
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
