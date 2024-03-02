@@ -21,36 +21,47 @@ const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
 
   const formattedPosts = await Promise.all(
-    posts.map(async ({ _id, author, authorImage, title, description, image, likes, comments }) => {
-
-      //auther image
-      const getObjectParams = {
-        Bucket: bucketName,
-        Key: authorImage,
-      };
-      const command = new GetObjectCommand(getObjectParams);
-      const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-      //pos image
-      const getObjectParamsPost = {
-        Bucket: bucketName,
-        Key: image,
-      };
-      const commandPost = new GetObjectCommand(getObjectParamsPost);
-      const postUrl = await getSignedUrl(s3, commandPost, { expiresIn: 3600 });
-
-      
-      return {
+    posts.map(
+      async ({
         _id,
         author,
-        authorImage: authorUrl,
+        authorImage,
         title,
         description,
-        image: postUrl,
+        image,
         likes,
         comments,
-      };
-    })
+      }) => {
+        //auther image
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: authorImage,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+        //pos image
+        const getObjectParamsPost = {
+          Bucket: bucketName,
+          Key: image,
+        };
+        const commandPost = new GetObjectCommand(getObjectParamsPost);
+        const postUrl = await getSignedUrl(s3, commandPost, {
+          expiresIn: 3600,
+        });
+
+        return {
+          _id,
+          author,
+          authorImage: authorUrl,
+          title,
+          description,
+          image: postUrl,
+          likes,
+          comments,
+        };
+      }
+    )
   );
 
   res.status(200).json(formattedPosts);
@@ -162,15 +173,37 @@ const deletePost = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.id });
 });
 
-
 //@desc post Likes
 //@route PATCH /api/posts/like
 //@access private
 
-const likePost = asyncHandler(async(req,res)=>{
-  console.log("GG")
-  console.log(res.user.firstName)
-})
+const likePost = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const post = await Post.findById(id);
+    const isLiked = post.likes.has(userId);
+
+    if (isLiked) {
+      post.likes.delete(userId);
+      console.log("Unliked post");
+    } else {
+      post.likes.set(userId, true);
+      console.log("Liked post");
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      {likes : post.likes},
+      {new: true}
+    )
+
+
+    res.status(200).json(updatedPost)
+  } catch (error) {
+    console.log(error)
+  } 
+});
 
 //Generate RND image name
 const randomImageName = (bytes = 32) =>

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
-import { toast } from "react-toastify";
 import { getAllPosts, postReset } from "../features/post/postSlice";
 import { PropagateLoader } from "react-spinners/";
 
