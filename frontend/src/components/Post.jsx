@@ -1,4 +1,8 @@
 import React from "react";
+import {useSelector, useDispatch} from "react-redux"
+import { likePost } from "../features/post/postSlice";
+
+
 import {
   BiLike,
   BiSolidLike,
@@ -8,8 +12,18 @@ import {
 } from "react-icons/bi";
 
 function Post({ allPostsDetails }) {
-  const { author, authorImage, comments, description, image, likes, title } =
+  const { _id, author, authorImage, comments, description, image, likes, title } =
     allPostsDetails;
+
+
+  const dispatch = useDispatch()
+  const {isLiked} = useSelector((state)=>state.post)
+
+
+
+  if(isLiked){
+    console.log("Post Liked")
+  }
 
   return (
     <div className="max-w-md bg-blue-50 rounded-lg overflow-hidden shadow-md font-inter">
@@ -40,17 +54,13 @@ function Post({ allPostsDetails }) {
       </div>
       <img className="w-full h-64 object-cover" src={image} alt="post image" />
       <div className="p-4 flex justify-between">
-        <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
+        <button  onClick={()=>{dispatch(likePost(_id))}}  className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
           <BiLike className="mr-2" />
           Like
         </button>
         <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
           <BiCommentDetail className="mr-2" />
           Comment
-        </button>
-        <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
-          <BiShare className="mr-2" />
-          Share
         </button>
       </div>
     </div>

@@ -40,8 +40,6 @@ const getAllPosts = async () => {
 
 
 
-
-
 // Delete user post
 const deletePost = async (postId, token) => {
   const config = {
@@ -50,16 +48,37 @@ const deletePost = async (postId, token) => {
     },
   };
 
-  const response = await axios.delete(API_URL="delete"+postId, config);
+  const response = await axios.delete(API_URL+"delete"+postId, config);
 
   return response.data;
 };
+
+
+
+//like post
+const likePost = async(postId, token)=>{
+  const config = {
+    headers : {
+      Authorization: `Bearer ${token}`,
+      "Content-Type" : "application/json"
+    },
+  };
+
+  const response = await axios.patch(API_URL+"like/"+postId, config)
+
+  return response.data;
+}
+
+
+
+
 
 const postService = {
   createPost,
   getUserPosts,
   deletePost,
   getAllPosts,
+  likePost,
 };
 
 export default postService;

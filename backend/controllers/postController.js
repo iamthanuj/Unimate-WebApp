@@ -21,7 +21,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
 
   const formattedPosts = await Promise.all(
-    posts.map(async ({ author, authorImage, title, description, image, likes, comments }) => {
+    posts.map(async ({ _id, author, authorImage, title, description, image, likes, comments }) => {
 
       //auther image
       const getObjectParams = {
@@ -41,8 +41,8 @@ const getAllPosts = asyncHandler(async (req, res) => {
 
       
       return {
+        _id,
         author,
-        
         authorImage: authorUrl,
         title,
         description,
@@ -162,6 +162,16 @@ const deletePost = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.id });
 });
 
+
+//@desc post Likes
+//@route PATCH /api/posts/like
+//@access private
+
+const likePost = asyncHandler(async(req,res)=>{
+  console.log("GG")
+  console.log(res.user.firstName)
+})
+
 //Generate RND image name
 const randomImageName = (bytes = 32) =>
   crypto.randomBytes(bytes).toString("hex");
@@ -172,4 +182,5 @@ module.exports = {
   createPost,
   updatePost,
   deletePost,
+  likePost,
 };
