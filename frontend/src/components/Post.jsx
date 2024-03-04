@@ -17,13 +17,15 @@ function Post({ allPostsDetails }) {
 
 
   const dispatch = useDispatch()
-  const {isLiked} = useSelector((state)=>state.post)
+  const {isLiked, } = useSelector((state)=>state.post)
 
 
+  const handleLike = () => {
+    dispatch(likePost(_id));
+  };
 
-  if(isLiked){
-    console.log("Post Liked")
-  }
+
+  console.log(likes)
 
   return (
     <div className="max-w-md bg-blue-50 rounded-lg overflow-hidden shadow-md font-inter">
@@ -54,10 +56,17 @@ function Post({ allPostsDetails }) {
       </div>
       <img className="w-full h-64 object-cover" src={image} alt="post image" />
       <div className="p-4 flex justify-between">
-        <button  onClick={()=>{dispatch(likePost(_id))}}  className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
-          <BiLike className="mr-2" />
-          Like
-        </button>
+      {isLiked ? (
+          <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
+            <BiSolidLike className="mr-2" />
+            Liked
+          </button>
+        ) : (
+          <button onClick={handleLike} className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
+            <BiLike className="mr-2" />
+            Like
+          </button>
+        )}
         <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
           <BiCommentDetail className="mr-2" />
           Comment

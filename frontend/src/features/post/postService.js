@@ -58,13 +58,13 @@ const deletePost = async (postId, token) => {
 //like post
 const likePost = async(postId, token)=>{
   const config = {
-    headers : {
+    headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type" : "application/json"
+      'Content-Type': 'application/json', 
     },
   };
 
-  const response = await axios.patch(API_URL+"like/"+postId,{}, config)
+  const response = await axios.patch(API_URL+"like/"+postId, config)
 
   return response.data;
 }

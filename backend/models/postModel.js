@@ -32,9 +32,9 @@ const postSchema = mongoose.Schema(
       required: [true, "Please add a image"],
     },
 
-    likes :{
+    likes: {
       type: Map,
-      of: Boolean
+      of: Boolean,
     },
     comments :{
       type : Array,
