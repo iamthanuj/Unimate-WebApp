@@ -64,7 +64,7 @@ const likePost = async(postId, token)=>{
     },
   };
 
-  const response = await axios.patch(API_URL+"like/"+postId, config)
+  const response = await axios.patch(API_URL+"like/"+postId,{}, config)
 
   return response.data;
 }
