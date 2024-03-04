@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
+import { Link } from "react-router-dom";
 
 function UserAvatar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -71,12 +72,7 @@ function UserAvatar() {
               aria-labelledby="dropdownAvatarNameButton"
             >
               <li>
-                <a
-                  href=""
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Profile
-                </a>
+                <Link className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" to="/profile" >Profile</Link>
               </li>
               <li>
                 <a

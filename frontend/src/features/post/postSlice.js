@@ -8,7 +8,6 @@ const initialState = {
   isSuccessPost: false,
   isLoadingPost: false,
   messagePost: "",
-  isLiked : false,
   updatedPost:[]
 };
 
@@ -120,10 +119,6 @@ export const postSlice = createSlice({
   reducers: {
     postReset: (state) => initialState,
 
-    toggleLike(state, action) {
-      const postId = action.payload;
-      state.posts[postId] = !state.posts[postId];
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -180,13 +175,12 @@ export const postSlice = createSlice({
       })
 
       .addCase(likePost.fulfilled, (state,action)=>{
-        state.isLiked = true
-        state.updatedPost = action.payload
+        state.updatedPost = action.payload;
       })
   },
 });
 
 
 
-export const { postReset,toggleLike } = postSlice.actions
+export const { postReset } = postSlice.actions
 export default postSlice.reducer

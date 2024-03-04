@@ -1,7 +1,6 @@
-import React from "react";
-import {useSelector, useDispatch} from "react-redux"
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { likePost } from "../features/post/postSlice";
-
 
 import {
   BiLike,
@@ -12,20 +11,39 @@ import {
 } from "react-icons/bi";
 
 function Post({ allPostsDetails }) {
-  const { _id, author, authorImage, comments, description, image, likes, title } =
-    allPostsDetails;
+  const {
+    _id,
+    author,
+    authorImage,
+    comments,
+    description,
+    image,
+    likes,
+    title,
+  } = allPostsDetails;
 
 
-  const dispatch = useDispatch()
-  const {isLiked, } = useSelector((state)=>state.post)
+  
 
+  const dispatch = useDispatch();
+  const { updatedPost } = useSelector((state) => state.post);
+  const {user} = useSelector((state)=>state.auth);
+
+
+  const isLiked = Boolean(likes[user._id]);
+  const likeCount = Object.keys(likes).length;
 
   const handleLike = () => {
-    dispatch(likePost(_id));
+    dispatch(likePost(_id))
+      // .then((response) => {
+      //   // Optionally dispatch toggleLike action here if needed
+      //   dispatch(toggleLike(_id));
+      // })
+      // .catch((error) => {
+      //   console.error('Error liking post:', error);
+      // });
   };
-
-
-  console.log(likes)
+ 
 
   return (
     <div className="max-w-md bg-blue-50 rounded-lg overflow-hidden shadow-md font-inter">
@@ -56,15 +74,18 @@ function Post({ allPostsDetails }) {
       </div>
       <img className="w-full h-64 object-cover" src={image} alt="post image" />
       <div className="p-4 flex justify-between">
-      {isLiked ? (
-          <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
+        {isLiked ? (
+          <button onClick={handleLike} className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
             <BiSolidLike className="mr-2" />
-            Liked
+            Liked <span>{likeCount}</span>
           </button>
         ) : (
-          <button onClick={handleLike} className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
+          <button
+            onClick={handleLike}
+            className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md"
+          >
             <BiLike className="mr-2" />
-            Like
+            Like <span className="ml-1">{likeCount}</span>
           </button>
         )}
         <button className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">

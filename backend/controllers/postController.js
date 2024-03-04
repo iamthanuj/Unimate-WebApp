@@ -23,6 +23,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
   const formattedPosts = await Promise.all(
     posts.map(
       async ({
+        user,
         _id,
         author,
         authorImage,
@@ -51,6 +52,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
         });
 
         return {
+          user,
           _id,
           author,
           authorImage: authorUrl,
@@ -72,7 +74,52 @@ const getAllPosts = asyncHandler(async (req, res) => {
 //@access private
 const getUserPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({ user: req.user.id });
-  res.status(200).json(posts);
+
+  //auther image
+  const getObjectParams = {
+    Bucket: bucketName,
+    Key: req.user.avatar,
+  };
+  const command = new GetObjectCommand(getObjectParams);
+  const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+  const formattedPosts = await Promise.all(
+    posts.map(async({
+      user,
+      _id,
+      author,
+      authorImage,
+      title,
+      description,
+      image,
+      likes,
+      comments,
+    })=>{
+       //pos image
+       const getObjectParamsPost = {
+        Bucket: bucketName,
+        Key: image,
+      };
+      const commandPost = new GetObjectCommand(getObjectParamsPost);
+      const postUrl = await getSignedUrl(s3, commandPost, {
+        expiresIn: 3600,
+      });
+
+      return {
+        user,
+        _id,
+        author,
+        authorImage: authorUrl,
+        title,
+        description,
+        image: postUrl,
+        likes,
+        comments,
+      };
+    })
+  )
+
+  res.status(200).json(formattedPosts);
 });
 
 //@desc Create posts

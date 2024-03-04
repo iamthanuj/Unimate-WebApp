@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
@@ -12,25 +12,39 @@ function HomePage() {
   const navigate = useNavigate();
   const { user, isLoading } = useSelector((state) => state.auth);
 
-  const { allPosts, isLoadingPost, isErrorPost, messagePost } = useSelector(
-    (state) => state.post
-  );
+  const { allPosts, updatedPost, isLoadingPost, isErrorPost, messagePost, posts } =
+    useSelector((state) => state.post);
+
 
   useEffect(() => {
-    if (!user || user===null) {
+    if (!user || user === null) {
       navigate("/");
     }
 
     if (isErrorPost) {
       console.log(messagePost);
     }
+
     dispatch(getAllPosts());
 
     return () => {
       dispatch(postReset());
     };
-  }, [user, navigate, isErrorPost, isLoading, messagePost, dispatch]);
+  }, [
+    user,
+    posts,
+    navigate,
+    updatedPost,
+    isErrorPost,
+    isLoading,
+    messagePost,
+    dispatch,
+  ]);
 
+
+
+
+  
   if (isLoadingPost) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -43,13 +57,16 @@ function HomePage() {
     );
   }
 
+  
+  const reversedPosts = [...allPosts].reverse();
+
   return (
     <div>
       <NavBar></NavBar>
       <div className="flex justify-center">
         <div className="pt-[100px] flex flex-col gap-14 ">
           <CreatePost />
-          {allPosts.map((post) => (
+          {reversedPosts.map((post) => (
             <Post key={post._id} allPostsDetails={post} /> // Use unique post ID as key
           ))}
         </div>
