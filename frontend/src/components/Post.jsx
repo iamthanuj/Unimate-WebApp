@@ -76,8 +76,8 @@ function Post({ allPostsDetails }) {
       <div className="p-4 flex justify-between">
         {isLiked ? (
           <button onClick={handleLike} className="flex items-center text-gray-600 hover:bg-gray-300 px-3 py-1 rounded-md">
-            <BiSolidLike className="mr-2" />
-            Liked <span>{likeCount}</span>
+            <BiSolidLike className="mr-2 text-secendoryColor" />
+            Liked <span className="ml-1">{likeCount}</span>
           </button>
         ) : (
           <button

@@ -12,7 +12,7 @@ function HomePage() {
   const navigate = useNavigate();
   const { user, isLoading } = useSelector((state) => state.auth);
 
-  const { allPosts, updatedPost, isLoadingPost, isErrorPost, messagePost, posts } =
+  const { allPosts, isLoadingPost, isErrorPost, messagePost, posts } =
     useSelector((state) => state.post);
 
 
@@ -34,7 +34,6 @@ function HomePage() {
     user,
     posts,
     navigate,
-    updatedPost,
     isErrorPost,
     isLoading,
     messagePost,

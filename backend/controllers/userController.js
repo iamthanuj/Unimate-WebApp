@@ -123,7 +123,7 @@ const loginUser = asyncHandler(async (req, res) => {
 //@route GET/api/users/me
 //@access Private
 const getUser = asyncHandler(async (req, res) => {
-  const { _id, firstName, lastName, email, university, avatar } =
+  const { _id, firstName, lastName, email, university, avatar, phone } =
     await User.findById(req.user.id);
 
   //get avatar url
@@ -139,6 +139,7 @@ const getUser = asyncHandler(async (req, res) => {
     firstName,
     lastName,
     email,
+    phone,
     university,
     avatar: url,
   });

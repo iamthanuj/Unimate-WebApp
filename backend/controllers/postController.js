@@ -84,40 +84,42 @@ const getUserPosts = asyncHandler(async (req, res) => {
   const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
   const formattedPosts = await Promise.all(
-    posts.map(async({
-      user,
-      _id,
-      author,
-      authorImage,
-      title,
-      description,
-      image,
-      likes,
-      comments,
-    })=>{
-       //pos image
-       const getObjectParamsPost = {
-        Bucket: bucketName,
-        Key: image,
-      };
-      const commandPost = new GetObjectCommand(getObjectParamsPost);
-      const postUrl = await getSignedUrl(s3, commandPost, {
-        expiresIn: 3600,
-      });
-
-      return {
+    posts.map(
+      async ({
         user,
         _id,
         author,
-        authorImage: authorUrl,
+        authorImage,
         title,
         description,
-        image: postUrl,
+        image,
         likes,
         comments,
-      };
-    })
-  )
+      }) => {
+        //post image
+        const getObjectParamsPost = {
+          Bucket: bucketName,
+          Key: image,
+        };
+        const commandPost = new GetObjectCommand(getObjectParamsPost);
+        const postUrl = await getSignedUrl(s3, commandPost, {
+          expiresIn: 3600,
+        });
+
+        return {
+          user,
+          _id,
+          author,
+          authorImage: authorUrl,
+          title,
+          description,
+          image: postUrl,
+          likes,
+          comments,
+        };
+      }
+    )
+  );
 
   res.status(200).json(formattedPosts);
 });
@@ -241,15 +243,50 @@ const likePost = asyncHandler(async (req, res) => {
 
     const updatedPost = await Post.findByIdAndUpdate(
       id,
-      {likes : post.likes},
-      {new: true}
-    )
+      { likes: post.likes },
+      { new: true }
+    );
 
 
-    res.status(200).json(updatedPost)
+    const {_id,user, author, authorImage, title, description, image, likes, comments} = updatedPost;
+
+    //auther image
+    const getObjectParams = {
+      Bucket: bucketName,
+      Key: authorImage,
+    };
+    const command = new GetObjectCommand(getObjectParams);
+    const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+
+    //post image
+    const getObjectParamsPost = {
+      Bucket: bucketName,
+      Key: image,
+    };
+    const commandPost = new GetObjectCommand(getObjectParamsPost);
+    const postUrl = await getSignedUrl(s3, commandPost, {
+      expiresIn: 3600,
+    });
+
+
+    const formattedPost = {
+      _id,
+      user,
+      author,
+      authorImage:authorUrl,
+      title,
+      description,
+      image:postUrl,
+      likes,
+      comments,
+    }
+
+
+    res.status(200).json(formattedPost);
   } catch (error) {
-    console.log(error)
-  } 
+    console.log(error);
+  }
 });
 
 //Generate RND image name

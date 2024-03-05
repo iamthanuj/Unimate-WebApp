@@ -61,7 +61,7 @@ function Profile() {
               </div>
               <div className=" w-full flex flex-col justify-center ">
                 <p className="text-xl font-bold"> {user.name} </p>
-                <p>{user.university}</p>
+                <p>@{user.university}</p>
               </div>
             </div>
             <div className="flex items-center">
@@ -91,11 +91,11 @@ function Profile() {
             <h1 className="text-xl font-bold text-gray-500">Contact Details</h1>
             <div className="flex justify-between">
               <p className="font-bold">Email</p>
-              <p>thanujadfernando@gmail.com</p>
+              <p>{user.email}</p>
             </div>
             <div className="flex justify-between">
               <p className="font-bold">Phone</p>
-              <p>0767596551</p>
+              <p>{user.phone}</p>
             </div>
           </div>
         </div>

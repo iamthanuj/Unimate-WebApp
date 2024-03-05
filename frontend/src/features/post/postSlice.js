@@ -8,7 +8,7 @@ const initialState = {
   isSuccessPost: false,
   isLoadingPost: false,
   messagePost: "",
-  updatedPost:[]
+  // updatedPost:[]
 };
 
 // Create new post
@@ -119,6 +119,9 @@ export const postSlice = createSlice({
   reducers: {
     postReset: (state) => initialState,
 
+    
+
+
   },
   extraReducers: (builder) => {
     builder
@@ -130,6 +133,12 @@ export const postSlice = createSlice({
         state.isLoadingPost = false;
         state.isSuccessPost = true;
         state.posts.push(action.payload);
+
+
+        
+
+
+
       })
 
       .addCase(createPost.rejected, (state, action) => {
@@ -175,7 +184,11 @@ export const postSlice = createSlice({
       })
 
       .addCase(likePost.fulfilled, (state,action)=>{
-        state.updatedPost = action.payload;
+        const updatedPost = state.allPosts.map((post)=>{
+          if(post._id === action.payload._id) return action.payload;
+          return post;
+        })
+        state.allPosts = updatedPost;
       })
   },
 });
