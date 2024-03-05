@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {motion} from "framer-motion"
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
@@ -59,7 +60,17 @@ function UserAvatar() {
 
         {/* Dropdown menu */}
         {isDropdownOpen && (
-          <div
+          <motion.div
+
+          initial={{
+            y:-10,
+            opacity: 0,
+          }}
+          animate={{
+            y:0,
+            opacity: 1,
+          }}
+
             id="dropdownAvatarName"
             className="z-10 absolute top-12 m-auto left-0 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-blue-950 dark:divide-gray-600"
           >
@@ -101,7 +112,7 @@ function UserAvatar() {
                 Sign out
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     );

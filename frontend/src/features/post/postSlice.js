@@ -134,11 +134,6 @@ export const postSlice = createSlice({
         state.isSuccessPost = true;
         state.posts.push(action.payload);
 
-
-        
-
-
-
       })
 
       .addCase(createPost.rejected, (state, action) => {
@@ -189,6 +184,12 @@ export const postSlice = createSlice({
           return post;
         })
         state.allPosts = updatedPost;
+
+        const updateUserPost = state.posts.map((post)=>{
+          if(post._id === action.payload._id) return action.payload;
+          return post;
+        })
+        state.posts = updateUserPost;
       })
   },
 });

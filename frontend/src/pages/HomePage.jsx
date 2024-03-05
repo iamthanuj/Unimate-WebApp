@@ -32,7 +32,6 @@ function HomePage() {
     };
   }, [
     user,
-    posts,
     navigate,
     isErrorPost,
     isLoading,
