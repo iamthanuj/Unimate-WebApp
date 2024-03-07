@@ -174,6 +174,48 @@ const getUserFriends = asyncHandler(async (req, res) => {
   res.status(200).json(formattedFriends);
 });
 
+
+
+//@desc get user details
+//@route GET/api/users/me
+//@access Private
+const addFriend = asyncHandler(async(req,res)=>{
+  const {friendId} = req.body;
+  const userId = req.user.id
+
+  const {_id,firstName, lastName,email, phone, university, avatar, friends  } = await User.findById(friendId);
+  const friendDetails = {
+    _id,firstName, lastName,email, phone, university, avatar, friends
+  }
+
+  const updatedPost = await User.findByIdAndUpdate(userId,
+    {$push: {friends:friendDetails} },
+    {new:true}
+    );
+
+
+  //user image
+  const getObjectParams = {
+    Bucket: bucketName,
+    Key: req.user.avatar,
+  };
+  const command = new GetObjectCommand(getObjectParams);
+  const userImageUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+
+
+  const formattedDetails  = await Promise.all(
+    
+  )
+  console.log(updatedPost)
+
+
+  
+})
+
+
+
+
 //Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -190,4 +232,5 @@ module.exports = {
   loginUser,
   getUser,
   getUserFriends,
+  addFriend,
 };

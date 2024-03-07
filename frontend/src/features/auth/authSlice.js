@@ -52,6 +52,28 @@ export const logout = createAsyncThunk("auth/logout", async () => {
 
 
 
+//add friend
+export const addFriend = createAsyncThunk(
+  "auth/addFriend",
+  async(friendData, thunkAPI)=>{
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await authService.addFriend(friendData,token);
+    } catch (error) {
+      const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+    }
+  }
+
+)
+
+
+
+
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -101,7 +123,17 @@ export const authSlice = createSlice({
       //logout case
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
-      });
+      })
+
+      //addfriend case
+      .addCase(addFriend.fulfilled,(state,action)=>{
+        console.log(action.payload)
+      })
+
+      .addCase(addFriend.rejected,(state,action)=>{
+        console.log(action.payload)
+      })
+
   },
 });
 

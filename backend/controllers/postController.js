@@ -51,6 +51,28 @@ const getAllPosts = asyncHandler(async (req, res) => {
           expiresIn: 3600,
         });
 
+        //gettting comment author images
+        const formattedComments = await Promise.all(
+          comments.map(async ({ userId, commentUser, comment, avatar }) => {
+            //auther image
+            const getObjectParams = {
+              Bucket: bucketName,
+              Key: avatar,
+            };
+            const command = new GetObjectCommand(getObjectParams);
+            const commentAuthorUrl = await getSignedUrl(s3, command, {
+              expiresIn: 3600,
+            });
+
+            return {
+              userId,
+              commentUser,
+              comment,
+              avatar: commentAuthorUrl,
+            };
+          })
+        );
+
         return {
           user,
           _id,
@@ -60,7 +82,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
           description,
           image: postUrl,
           likes,
-          comments,
+          comments: formattedComments,
         };
       }
     )
@@ -247,8 +269,17 @@ const likePost = asyncHandler(async (req, res) => {
       { new: true }
     );
 
-
-    const {_id,user, author, authorImage, title, description, image, likes, comments} = updatedPost;
+    const {
+      _id,
+      user,
+      author,
+      authorImage,
+      title,
+      description,
+      image,
+      likes,
+      comments,
+    } = updatedPost;
 
     //auther image
     const getObjectParams = {
@@ -257,7 +288,6 @@ const likePost = asyncHandler(async (req, res) => {
     };
     const command = new GetObjectCommand(getObjectParams);
     const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
 
     //post image
     const getObjectParamsPost = {
@@ -269,21 +299,115 @@ const likePost = asyncHandler(async (req, res) => {
       expiresIn: 3600,
     });
 
-
     const formattedPost = {
       _id,
       user,
       author,
-      authorImage:authorUrl,
+      authorImage: authorUrl,
       title,
       description,
-      image:postUrl,
+      image: postUrl,
       likes,
       comments,
-    }
-
+    };
 
     res.status(200).json(formattedPost);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//comment post
+const commentPost = asyncHandler(async (req, res) => {
+  try {
+    if (req.body.comment) {
+      const { id } = req.params;
+      const userId = req.user.id;
+      const { firstName, lastName, avatar } = await User.findById(userId);
+      const { comment } = req.body;
+
+      const newComment = {
+        userId,
+        commentUser: `${firstName} ${lastName}`,
+        comment,
+        avatar,
+      };
+
+      const updatedPost = await Post.findByIdAndUpdate(
+        id,
+        { $push: { comments: newComment } },
+        { new: true }
+      );
+
+      console.log(updatedPost);
+      const {
+        _id,
+        user,
+        author,
+        authorImage,
+        title,
+        description,
+        image,
+        likes,
+        comments,
+      } = updatedPost;
+
+      //auther image
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: authorImage,
+      };
+      const command = new GetObjectCommand(getObjectParams);
+      const authorUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+      //post image
+      const getObjectParamsPost = {
+        Bucket: bucketName,
+        Key: image,
+      };
+      const commandPost = new GetObjectCommand(getObjectParamsPost);
+      const postUrl = await getSignedUrl(s3, commandPost, {
+        expiresIn: 3600,
+      });
+
+      const formattedComments = await Promise.all(
+        comments.map(async ({ userId, commentUser, comment, avatar }) => {
+          //auther image
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: avatar,
+          };
+          const command = new GetObjectCommand(getObjectParams);
+          const commentAuthorUrl = await getSignedUrl(s3, command, {
+            expiresIn: 3600,
+          });
+
+          return {
+            userId,
+            commentUser,
+            comment,
+            avatar: commentAuthorUrl,
+          };
+        })
+      );
+
+      console.log(formattedComments);
+      const formattedPost = {
+        _id,
+        user,
+        author,
+        authorImage: authorUrl,
+        title,
+        description,
+        image: postUrl,
+        likes,
+        comments: formattedComments,
+      };
+
+      res.status(200).json(formattedPost);
+    } else {
+      throw new Error("need all info");
+    }
   } catch (error) {
     console.log(error);
   }
@@ -300,4 +424,5 @@ module.exports = {
   updatePost,
   deletePost,
   likePost,
+  commentPost,
 };

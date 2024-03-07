@@ -3,7 +3,7 @@ import postService from "./postService";
 
 const initialState = {
   posts: [],
-  allPosts:[],
+  allPosts: [],
   isErrorPost: false,
   isSuccessPost: false,
   isLoadingPost: false,
@@ -49,7 +49,6 @@ export const getPosts = createAsyncThunk(
   }
 );
 
-
 // Get all posts
 export const getAllPosts = createAsyncThunk(
   "posts/getAllPosts",
@@ -67,7 +66,6 @@ export const getAllPosts = createAsyncThunk(
     }
   }
 );
-
 
 // Delete user post
 export const deletePost = createAsyncThunk(
@@ -88,40 +86,41 @@ export const deletePost = createAsyncThunk(
   }
 );
 
-
-
 //like post
-export const likePost = createAsyncThunk(
-  "posts/like",
-  async(id, thunkAPI)=>{
+export const likePost = createAsyncThunk("posts/like", async (id, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token;
+    return await postService.likePost(id, token);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+//comment post
+export const commentPost = createAsyncThunk(
+  "posts/comment",
+  async (commentData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      console.log(token)
-      return await postService.likePost(id,token);
+      return await postService.commentPost(commentData,token);
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
+      (error.response && error.response.data && error.response.data.message) ||
         error.message ||
         error.toString();
       return thunkAPI.rejectWithValue(message);
     }
-
   }
-)
-
-
+);
 
 export const postSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
     postReset: (state) => initialState,
-
-    
-
-
   },
   extraReducers: (builder) => {
     builder
@@ -133,7 +132,6 @@ export const postSlice = createSlice({
         state.isLoadingPost = false;
         state.isSuccessPost = true;
         state.posts.push(action.payload);
-
       })
 
       .addCase(createPost.rejected, (state, action) => {
@@ -145,56 +143,65 @@ export const postSlice = createSlice({
 
       //get posts
       .addCase(getPosts.pending, (state) => {
-        state.isLoadingPost = true
+        state.isLoadingPost = true;
       })
 
       .addCase(getPosts.fulfilled, (state, action) => {
-        state.isLoadingPost = false
-        state.isSuccessPost = true
-        state.posts = action.payload
+        state.isLoadingPost = false;
+        state.isSuccessPost = true;
+        state.posts = action.payload;
       })
 
       .addCase(getPosts.rejected, (state, action) => {
-        state.isLoadingPost = false
-        state.isErrorPost = true
-        state.messagePost = action.payload
+        state.isLoadingPost = false;
+        state.isErrorPost = true;
+        state.messagePost = action.payload;
       })
 
       //get all posts
 
-      .addCase(getAllPosts.pending, (state)=>{
-        state.isLoadingPost = true
+      .addCase(getAllPosts.pending, (state) => {
+        state.isLoadingPost = true;
       })
 
-      .addCase(getAllPosts.fulfilled, (state,action)=>{
-        state.isLoadingPost = false
-        state.isSuccessPost = true
-        state.allPosts = action.payload
+      .addCase(getAllPosts.fulfilled, (state, action) => {
+        state.isLoadingPost = false;
+        state.isSuccessPost = true;
+        state.allPosts = action.payload;
       })
 
-      .addCase(getAllPosts.rejected, (state, action)=>{
-        state.isLoadingPost = false
-        state.isErrorPost = true
-        state.messagePost = action.payload
+      .addCase(getAllPosts.rejected, (state, action) => {
+        state.isLoadingPost = false;
+        state.isErrorPost = true;
+        state.messagePost = action.payload;
       })
 
-      .addCase(likePost.fulfilled, (state,action)=>{
+      //Like posts
+      .addCase(likePost.fulfilled, (state, action) => {
+        const updatedPost = state.allPosts.map((post) => {
+          if (post._id === action.payload._id) return action.payload;
+          return post;
+        });
+        state.allPosts = updatedPost;
+
+        const updateUserPost = state.posts.map((post) => {
+          if (post._id === action.payload._id) return action.payload;
+          return post;
+        });
+        state.posts = updateUserPost;
+      })
+
+      //comment posts
+      .addCase(commentPost.fulfilled, (state, action)=>{
+        console.log(action.payload)
         const updatedPost = state.allPosts.map((post)=>{
           if(post._id === action.payload._id) return action.payload;
           return post;
-        })
+        });
         state.allPosts = updatedPost;
-
-        const updateUserPost = state.posts.map((post)=>{
-          if(post._id === action.payload._id) return action.payload;
-          return post;
-        })
-        state.posts = updateUserPost;
       })
   },
 });
 
-
-
-export const { postReset } = postSlice.actions
-export default postSlice.reducer
+export const { postReset } = postSlice.actions;
+export default postSlice.reducer;

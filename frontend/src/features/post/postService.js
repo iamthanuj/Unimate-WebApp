@@ -65,7 +65,21 @@ const likePost = async(postId, token)=>{
   };
 
   const response = await axios.patch(API_URL+"like/"+postId,{}, config)
+  return response.data;
+}
 
+
+
+//comment post
+const commentPost = async(commentData, token)=>{
+  const config = {
+    headers:{
+      Authorization:  `Bearer ${token}`,
+      'Content-Type': 'application/json', 
+    },
+
+  };
+  const response = await axios.patch(API_URL+"comment/"+commentData._id,commentData,config)
   return response.data;
 }
 
@@ -77,6 +91,7 @@ const postService = {
   deletePost,
   getAllPosts,
   likePost,
+  commentPost,
 };
 
 export default postService;

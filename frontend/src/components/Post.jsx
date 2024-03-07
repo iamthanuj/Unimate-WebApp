@@ -1,14 +1,16 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { likePost } from "../features/post/postSlice";
-
+import { likePost, commentPost } from "../features/post/postSlice";
+import { addFriend } from "../features/auth/authSlice";
+import { toast } from "react-toastify";
+import CommentComp from "./CommentComp";
+import { IoPersonAddSharp, IoPersonRemoveSharp } from "react-icons/io5";
 import {
   BiLike,
   BiSolidLike,
   BiCommentDetail,
-  BiSolidSend ,
-  BiDotsVerticalRounded,
+  BiSolidSend,
 } from "react-icons/bi";
 
 function Post({ allPostsDetails }) {
@@ -23,7 +25,10 @@ function Post({ allPostsDetails }) {
     title,
   } = allPostsDetails;
 
+  const postUser = allPostsDetails.user;
+
   const [commentToggle, setCommentToggle] = useState(false);
+  const [comment, setComment] = useState("");
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -38,6 +43,32 @@ function Post({ allPostsDetails }) {
   const onComment = () => {
     setCommentToggle(!commentToggle);
   };
+
+  const handleComment = async (e) => {
+    e.preventDefault();
+
+    if (!comment) {
+      toast.error("Enter comment!");
+    } else {
+      const commentData = {
+        comment,
+        _id,
+      };
+
+      dispatch(commentPost(commentData));
+      setComment("");
+    }
+  };
+
+  const handleAddFriend = ()=>{
+
+    const friendData = {
+      friendId : postUser,
+    }
+
+    dispatch(addFriend(friendData))
+  }
+
 
   return (
     <motion.div
@@ -61,12 +92,21 @@ function Post({ allPostsDetails }) {
             />
             <div>
               <p className="text-lg font-semibold text-gray-800">{author}</p>
-              <p className="text-sm text-gray-600">Creator, Chakra UI</p>
+              <p className="text-sm text-gray-600">Student</p>
             </div>
           </div>
-          <button className="text-gray-600 p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
-            <BiDotsVerticalRounded />
-          </button>
+          {/* Follow or remove buttons */}
+          {postUser === user._id ? (
+            <button className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
+              Delete <IoPersonRemoveSharp />
+            </button>
+          ) : (
+            <button 
+            onClick={handleAddFriend}
+            className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
+              Follow <IoPersonAddSharp />
+            </button>
+          )}
         </div>
       </div>
       <div className="p-4">
@@ -117,14 +157,33 @@ function Post({ allPostsDetails }) {
           className=" bg-white rounded-sm shadow-md mt-2 p-4"
         >
           {/* all commments */}
-          <div></div>
+          <div className="bg-gray-50 rounded-md p-2 flex flex-col gap-4">
+            {comments.map((comItem) => (
+              <CommentComp key={comItem._id} commentData={comItem} />
+            ))}
+          </div>
 
           {/* add comment */}
-          <form className="flex justify-between items-center gap-3">
-            <textarea type="text" placeholder="Your Comment" className="w-full border-secendoryColor resize-none outline-secendoryColor p-2" ></textarea>
+          <form
+            onSubmit={handleComment}
+            className="flex justify-between items-center gap-3"
+          >
+            <textarea
+              type="text"
+              value={comment}
+              onChange={(e) => {
+                setComment(e.target.value);
+              }}
+              placeholder="Your Comment"
+              className="w-full border-secendoryColor resize-none outline-secendoryColor p-2"
+            ></textarea>
             <div className="flex items-center gap-1 shadow-md px-4 py-2 rounded-md h-fit cursor-pointer bg-secendoryColor hover:bg-mainColor">
-              <input type="submit" value="Add" className="cursor-pointer text-white" />
-              <BiSolidSend className="text-white text-xl "/>
+              <input
+                type="submit"
+                value="Add"
+                className="cursor-pointer text-white"
+              />
+              <BiSolidSend className="text-white text-xl " />
             </div>
           </form>
         </motion.div>

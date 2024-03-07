@@ -27,7 +27,6 @@ const login = async (userData)=>{
 }
 
 
-
 //logout
 const logout = ()=>{
     localStorage.removeItem('user')
@@ -35,10 +34,26 @@ const logout = ()=>{
 
 
 
+
+
+//add firend
+const addFriend = async (friendData,token)=>{
+    const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+    const response = await axios.patch(API_URL+"addfriend",friendData,config)
+    return response.data;
+}
+
+
+
 const authService = {
     register,
     logout,
-    login
+    login,
+    addFriend,
 }
 
 export default authService
