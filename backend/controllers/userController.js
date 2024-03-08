@@ -40,8 +40,6 @@ const registerUser = asyncHandler(async (req, res) => {
   //image
   const generatedAvatar = randomAvatarName();
 
-  console.log(req.file.buffer);
-
   //create user
   const user = await User.create({
     firstName,
@@ -50,6 +48,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
     phone,
     university,
+    friends,
     avatar: generatedAvatar,
   });
 
@@ -65,8 +64,8 @@ const registerUser = asyncHandler(async (req, res) => {
     const command = new PutObjectCommand(prams);
     await s3.send(command);
 
-     //get avatar url
-     const getObjectParams = {
+    //get avatar url
+    const getObjectParams = {
       Bucket: bucketName,
       Key: user.avatar,
     };
@@ -79,7 +78,7 @@ const registerUser = asyncHandler(async (req, res) => {
       email: user.email,
       university: user.university,
       token: generateToken(user._id),
-      avatar:url
+      avatar: url,
     });
   } else {
     res.status(400);
@@ -105,14 +104,37 @@ const loginUser = asyncHandler(async (req, res) => {
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
-    res.json({
+    const friends = await Promise.all(
+      user.friends.map((id) => User.findById(id))
+    );
+
+    const formattedFriends = await Promise.all(
+      friends.map(
+        async({ _id, firstName, lastName, email, phone, university, avatar }) => {
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: avatar,
+          };
+          const command = new GetObjectCommand(getObjectParams);
+          const url = await  getSignedUrl(s3, command, { expiresIn: 3600 });
+          return { _id, firstName, lastName, email, phone, university, url };
+        }
+      )
+    );
+
+    console.log(formattedFriends);
+
+    const loggedUser = {
       _id: user.id,
       name: `${user.firstName} ${user.lastName} `,
       email: user.email,
-      university:user.university,
+      university: user.university,
+      friends: formattedFriends,
       token: generateToken(user._id),
       avatar: url,
-    });
+    };
+
+    res.json(loggedUser);
   } else {
     res.status(400);
     throw new Error("Invalid credentials");
@@ -123,8 +145,16 @@ const loginUser = asyncHandler(async (req, res) => {
 //@route GET/api/users/me
 //@access Private
 const getUser = asyncHandler(async (req, res) => {
-  const { _id, firstName, lastName, email, university, avatar, phone } =
-    await User.findById(req.user.id);
+  const {
+    _id,
+    firstName,
+    lastName,
+    email,
+    university,
+    avatar,
+    phone,
+    friends,
+  } = await User.findById(req.user.id);
 
   //get avatar url
   const getObjectParams = {
@@ -140,6 +170,7 @@ const getUser = asyncHandler(async (req, res) => {
     lastName,
     email,
     phone,
+    friends,
     university,
     avatar: url,
   });
@@ -174,47 +205,76 @@ const getUserFriends = asyncHandler(async (req, res) => {
   res.status(200).json(formattedFriends);
 });
 
-
-
 //@desc get user details
 //@route GET/api/users/me
 //@access Private
-const addFriend = asyncHandler(async(req,res)=>{
-  const {friendId} = req.body;
-  const userId = req.user.id
+const addRemoveFriend = asyncHandler(async (req, res) => {
+  try {
+    const { friendId } = req.body;
+    const userId = req.user.id;
 
-  const {_id,firstName, lastName,email, phone, university, avatar, friends  } = await User.findById(friendId);
-  const friendDetails = {
-    _id,firstName, lastName,email, phone, university, avatar, friends
-  }
+    console.log(friendId)
 
-  const updatedPost = await User.findByIdAndUpdate(userId,
-    {$push: {friends:friendDetails} },
-    {new:true}
+    const user = await User.findById(userId);
+    const friend = await User.findById(friendId);
+
+    if (user.friends.includes(friendId)) {
+      user.friends = user.friends.filter((id) => id !== friendId);
+      friend.friends = friend.friends.filter((id) => id !== userId);
+    } else {
+      user.friends.push(friendId);
+      friend.friends.push(userId);
+    }
+
+    await user.save();
+    await friend.save();
+
+    const friends = await Promise.all(
+      user.friends.map((id) => User.findById(id))
     );
 
+    const formattedFriends = await Promise.all(
+      friends.map(
+        async ({
+          _id,
+          firstName,
+          lastName,
+          email,
+          phone,
+          university,
+          avatar,
+          friends,
+        }) => {
+          //friend image
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: avatar,
+          };
+          const command = new GetObjectCommand(getObjectParams);
+          const friendImage = await getSignedUrl(s3, command, {
+            expiresIn: 3600,
+          });
 
-  //user image
-  const getObjectParams = {
-    Bucket: bucketName,
-    Key: req.user.avatar,
-  };
-  const command = new GetObjectCommand(getObjectParams);
-  const userImageUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          return {
+            _id,
+            firstName,
+            lastName,
+            email,
+            phone,
+            university,
+            avatar: friendImage,
+            friends,
+          };
+        }
+      )
+    );
 
-
-
-  const formattedDetails  = await Promise.all(
-    
-  )
-  console.log(updatedPost)
-
-
-  
-})
-
-
-
+    res.status(200).json(formattedFriends);
+  } catch (error) {
+    res.status(404);
+    throw new Error(error);
+  }
+});
 
 //Generate JWT
 const generateToken = (id) => {
@@ -232,5 +292,5 @@ module.exports = {
   loginUser,
   getUser,
   getUserFriends,
-  addFriend,
+  addRemoveFriend,
 };

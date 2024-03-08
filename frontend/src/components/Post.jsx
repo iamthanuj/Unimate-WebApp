@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { likePost, commentPost } from "../features/post/postSlice";
-import { addFriend } from "../features/auth/authSlice";
+import { addRemoveFriend } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import CommentComp from "./CommentComp";
 import { IoPersonAddSharp, IoPersonRemoveSharp } from "react-icons/io5";
@@ -66,7 +66,7 @@ function Post({ allPostsDetails }) {
       friendId : postUser,
     }
 
-    dispatch(addFriend(friendData))
+    dispatch(addRemoveFriend(friendData))
   }
 
 

@@ -22,16 +22,18 @@ function HomePage() {
       navigate("/");
     }
 
+
+
     if (isErrorPost) {
       console.log(messagePost);
     }
 
     dispatch(getAllPosts());
 
-    return () => {
+    return () => {8
       dispatch(postReset());
     };
-  }, [user, navigate, isErrorPost, isLoading, messagePost, dispatch]);
+  }, [ navigate, isErrorPost, isLoading, messagePost, dispatch]);
 
   if (isLoadingPost) {
     return (

@@ -37,13 +37,13 @@ const logout = ()=>{
 
 
 //add firend
-const addFriend = async (friendData,token)=>{
+const addRemoveFriend = async (friendData,token)=>{
     const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
-    const response = await axios.patch(API_URL+"addfriend",friendData,config)
+    const response = await axios.patch(API_URL+"addremovefriend",friendData,config)
     return response.data;
 }
 
@@ -53,7 +53,7 @@ const authService = {
     register,
     logout,
     login,
-    addFriend,
+    addRemoveFriend,
 }
 
 export default authService

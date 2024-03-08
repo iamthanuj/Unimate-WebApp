@@ -9,6 +9,7 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: "",
+  friendList:[]
 };
 
 //register User
@@ -53,12 +54,12 @@ export const logout = createAsyncThunk("auth/logout", async () => {
 
 
 //add friend
-export const addFriend = createAsyncThunk(
+export const addRemoveFriend = createAsyncThunk(
   "auth/addFriend",
   async(friendData, thunkAPI)=>{
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await authService.addFriend(friendData,token);
+      return await authService.addRemoveFriend(friendData,token);
     } catch (error) {
       const message =
       (error.response && error.response.data && error.response.data.message) ||
@@ -126,11 +127,12 @@ export const authSlice = createSlice({
       })
 
       //addfriend case
-      .addCase(addFriend.fulfilled,(state,action)=>{
-        console.log(action.payload)
+      .addCase(addRemoveFriend.fulfilled,(state,action)=>{  
+        state.user.friends = action.payload;
+        console.log(state.user)
       })
 
-      .addCase(addFriend.rejected,(state,action)=>{
+      .addCase(addRemoveFriend.rejected,(state,action)=>{
         console.log(action.payload)
       })
 
