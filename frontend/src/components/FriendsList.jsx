@@ -11,8 +11,6 @@ function FriendsList() {
   
 
 
-  console.log(friends)
-
   const handleAddFriend = (fid) => {
     const friendData = {
       friendId: fid,
@@ -26,7 +24,7 @@ function FriendsList() {
   } else {
 
     const { friends } = user;
-    
+
     return (
       <div className="bg-blue-50 w-[300px] h-[500px] fixed rounded-lg overflow-hidden">
         <div className=" bg-gradient-to-r from-mainColor to-secendoryColor text-white text-center">
