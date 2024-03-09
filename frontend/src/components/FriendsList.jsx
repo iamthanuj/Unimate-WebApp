@@ -29,12 +29,12 @@ function FriendsList() {
       <div className="bg-blue-50 w-[400px] h-[500px] fixed rounded-lg overflow-hidden">
         <div className=" bg-gradient-to-r from-mainColor to-secendoryColor text-white text-center">
           <p className="flex justify-center items-center gap-1 py-2">
-            <FaUserGraduate /> Followers{" "}
+            <FaUserGraduate /> Followers
             <img
               className="h-[20px] w-[20px]"
               src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Animals%20and%20Nature/Fire.webp"
               alt=""
-            />{" "}
+            />
           </p>
         </div>
         <div>
