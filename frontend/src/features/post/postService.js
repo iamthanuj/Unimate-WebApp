@@ -48,8 +48,7 @@ const deletePost = async (postId, token) => {
     },
   };
 
-  const response = await axios.delete(API_URL+"delete"+postId, config);
-
+  const response = await axios.delete(API_URL+"delete/"+postId,config);
   return response.data;
 };
 

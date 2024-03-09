@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { likePost, commentPost } from "../features/post/postSlice";
+import { likePost, commentPost, deletePost } from "../features/post/postSlice";
 import { addRemoveFriend } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import CommentComp from "./CommentComp";
-import { IoPersonAddSharp, IoPersonRemoveSharp } from "react-icons/io5";
+import { IoPersonAddSharp, IoPersonRemoveSharp,IoTrashOutline  } from "react-icons/io5";
+
 import {
   BiLike,
   BiSolidLike,
@@ -36,6 +37,8 @@ function Post({ allPostsDetails }) {
   const isLiked = Boolean(likes[user._id]);
   const likeCount = Object.keys(likes).length;
 
+  
+
   const handleLike = () => {
     dispatch(likePost(_id));
   };
@@ -60,13 +63,18 @@ function Post({ allPostsDetails }) {
     }
   };
 
-  const handleAddFriend = ()=>{
+  const handleAddFriend = async()=>{
 
     const friendData = {
       friendId : postUser,
     }
 
     dispatch(addRemoveFriend(friendData))
+  }
+
+
+  const handlePostDelete = async(postId)=>{
+    dispatch(deletePost(postId))
   }
 
 
@@ -97,8 +105,10 @@ function Post({ allPostsDetails }) {
           </div>
           {/* Follow or remove buttons */}
           {postUser === user._id ? (
-            <button className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
-              Delete <IoPersonRemoveSharp />
+            <button 
+            onClick={()=>{handlePostDelete(_id)}}
+            className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
+              Delete <IoTrashOutline />
             </button>
           ) : (
             <button 

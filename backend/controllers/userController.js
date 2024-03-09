@@ -48,7 +48,6 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
     phone,
     university,
-    friends,
     avatar: generatedAvatar,
   });
 
@@ -117,7 +116,7 @@ const loginUser = asyncHandler(async (req, res) => {
           };
           const command = new GetObjectCommand(getObjectParams);
           const url = await  getSignedUrl(s3, command, { expiresIn: 3600 });
-          return { _id, firstName, lastName, email, phone, university, url };
+          return { _id, firstName, lastName, email, phone, university, avatar:url };
         }
       )
     );
@@ -128,6 +127,7 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: `${user.firstName} ${user.lastName} `,
       email: user.email,
+      phone: user.phone,
       university: user.university,
       friends: formattedFriends,
       token: generateToken(user._id),

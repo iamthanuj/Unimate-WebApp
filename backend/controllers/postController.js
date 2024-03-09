@@ -167,8 +167,6 @@ const createPost = asyncHandler(async (req, res) => {
       comments: [],
     });
 
-    console.log(req.file.buffer);
-
     //upload image
     const prams = {
       Bucket: bucketName,
@@ -178,6 +176,9 @@ const createPost = asyncHandler(async (req, res) => {
     };
     const command = new PutObjectCommand(prams);
     await s3.send(command);
+
+
+    
 
     res.status(200).json(post);
   }

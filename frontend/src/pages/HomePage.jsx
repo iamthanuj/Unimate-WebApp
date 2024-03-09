@@ -5,6 +5,7 @@ import NavBar from "../components/NavBar";
 import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
 import FriendsList from "../components/FriendsList";
+import EventsTab from "../components/EventsTab";
 import { getAllPosts, postReset } from "../features/post/postSlice";
 import { PropagateLoader } from "react-spinners/";
 
@@ -57,13 +58,16 @@ function HomePage() {
           <div className="absolute pt-[100px] left-0">
             <FriendsList />
           </div>
-          {/* <FriendsList className="absolute" /> */}
+          <div className="absolute pt-[100px] right-0">
+            <EventsTab/>  
+          </div>
           <div className="pt-[100px] flex flex-col gap-14 ">
             <CreatePost />
             {reversedPosts.map((post) => (
               <Post key={post._id} allPostsDetails={post} /> // Use unique post ID as key
             ))}
           </div>
+          
         </div>
       </div>
     </div>
