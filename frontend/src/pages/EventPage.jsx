@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import NavBar from "../components/NavBar";
+import AdminNavBar from "../components/Admin/AdminNavBar";
 import { useDispatch, useSelector } from "react-redux";
 import { createEvent } from "../features/event/eventSlice";
-
+import { FcApproval } from "react-icons/fc";
 
 function EventPage() {
   const [eventData, setEventData] = useState({
+    organizer:"",
     title: "",
     description: "",
     location: "",
@@ -13,11 +14,10 @@ function EventPage() {
     type: "physical",
   });
 
-  const { title, description, location, date, type } = eventData;
-
+  const { organizer, title, description, location, date, type } = eventData;
 
   const dispatch = useDispatch();
-  const {events} = useSelector((state)=>state.event)
+  const { events } = useSelector((state) => state.event);
 
   const onChange = (e) => {
     setEventData((prevState) => ({
@@ -26,15 +26,15 @@ function EventPage() {
     }));
   };
 
-  const onSubmit = async (e)=>{
+  const onSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createEvent(eventData))
-  }
+    dispatch(createEvent(eventData));
+  };
 
   return (
-    <div className="bg-landing-bg bg-fixed h-screen font-inter">
-      <NavBar />
-      <div className="container mx-auto pt-[200px]">
+    <div className="bg-secendoryColor font-inter">
+      <AdminNavBar/>
+      <div className="container mx-auto pt-[100px]">
         <h1 className="text-center text-5xl font-semibold text-white mb-5">
           List Your Event Here!
         </h1>
@@ -42,6 +42,24 @@ function EventPage() {
         {/* create event */}
         <div className="flex justify-center w-[400px] bg-white mx-auto rounded-xl p-5">
           <form className="pt-4 w-full" onSubmit={onSubmit}>
+          <div className="relative z-0 w-full mb-5 group">
+              <input
+                type="text"
+                name="organizer"
+                value={organizer}
+                id="floating_email"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+                onChange={onChange}
+              />
+              <label
+                htmlFor="floating_email"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                Organizer
+              </label>
+            </div>
             <div className="relative z-0 w-full mb-5 group">
               <input
                 type="text"
@@ -113,6 +131,7 @@ function EventPage() {
               <input
                 type="date"
                 name="date"
+                value={date}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Select date"
                 onChange={onChange}
@@ -145,7 +164,57 @@ function EventPage() {
         </div>
 
         {/* display events list */}
-        <div></div>
+        <div className="">
+          <h1 className="text-white font-semibold flex items-center">Active Events <span><FcApproval/></span></h1>
+          <div>
+            <div>
+              <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                      <th scope="col" className="px-6 py-3">
+                        Event Name
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Title
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Organizer
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Date
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      >
+                        Apple MacBook Pro 17"
+                      </th>
+                      <td className="px-6 py-4">Silver</td>
+                      <td className="px-6 py-4">Laptop</td>
+                      <td className="px-6 py-4">$2999</td>
+                      <td className="px-6 py-4 flex gap-2">
+                        <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                          Edit
+                        </button>
+                        <button className="font-medium text-red-600 hover:underline">
+                          Delete
+                        </button>
+                      </td>
+                    </tr> 
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

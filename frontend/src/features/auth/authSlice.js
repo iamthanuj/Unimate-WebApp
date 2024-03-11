@@ -5,11 +5,13 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
   user: user ? user : null,
+  admin:"",
+  adminSuccess:false,
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
-  friendList:[]
+  friendList: [],
 };
 
 //register User
@@ -43,37 +45,47 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   }
 });
 
-
+//login admin
+export const adminLogin = createAsyncThunk(
+  "auth/adminlogin",
+  async (admin, thunkAPI) => {
+    try {
+      return await authService.adminLogin(admin);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 //logout user
 export const logout = createAsyncThunk("auth/logout", async () => {
   await authService.logout();
 });
 
-
-
-
 //add friend
 export const addRemoveFriend = createAsyncThunk(
   "auth/addFriend",
-  async(friendData, thunkAPI)=>{
+  async (friendData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await authService.addRemoveFriend(friendData,token);
+      return await authService.addRemoveFriend(friendData, token);
     } catch (error) {
       const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(message);
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
     }
   }
-
-)
-
-
-
-
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -127,13 +139,25 @@ export const authSlice = createSlice({
       })
 
       //addfriend case
-      .addCase(addRemoveFriend.fulfilled,(state,action)=>{  
+      .addCase(addRemoveFriend.fulfilled, (state, action) => {
         state.user.friends = action.payload;
-        console.log(state.user)
+        console.log(state.user);
       })
 
-      .addCase(addRemoveFriend.rejected,(state,action)=>{
-        console.log(action.payload)
+      .addCase(addRemoveFriend.rejected, (state, action) => {
+        console.log(action.payload);
+      })
+
+
+      //admin login
+      .addCase(adminLogin.fulfilled, (state,action)=>{
+        state.adminSuccess = true;
+        state.admin = action.payload.username
+      })
+
+      .addCase(adminLogin.rejected, (state, action)=>{
+        state.adminSuccess = false;
+        state.message = action.payload;
       })
 
   },

@@ -27,6 +27,21 @@ const login = async (userData)=>{
 }
 
 
+//admin login
+const adminLogin = async (adminData)=>{
+    const response = await axios.post(API_URL + 'adminlogin', adminData)
+
+    if(response.data) {
+        localStorage.setItem('user', JSON.stringify(response.data))
+    }
+
+    return response.data
+}
+
+
+
+
+
 //logout
 const logout = ()=>{
     localStorage.removeItem('user')
@@ -54,6 +69,7 @@ const authService = {
     logout,
     login,
     addRemoveFriend,
+    adminLogin,
 }
 
 export default authService

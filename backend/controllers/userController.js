@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //image
   const generatedAvatar = randomAvatarName();
-
+  
   //create user
   const user = await User.create({
     firstName,
@@ -140,6 +140,24 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 });
+
+
+//@desc login admin
+//@route SET/api/users/adminlogin
+//@access Private
+
+const adminLogin = asyncHandler(async(req,res)=>{
+  const {username, password} = req.body;
+  if(username==="admin@unimate.com" && password==="P@ssword1234"){
+    const access = {username, status:true}
+    res.status(200).json(access)
+  }else{
+    res.status(400)
+    throw new Error("Wrong credentials")
+  } 
+})
+
+
 
 //@desc get user details
 //@route GET/api/users/me
@@ -293,4 +311,5 @@ module.exports = {
   getUser,
   getUserFriends,
   addRemoveFriend,
+  adminLogin,
 };
