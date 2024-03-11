@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import AdminNavBar from "../components/Admin/AdminNavBar";
 import { useDispatch, useSelector } from "react-redux";
-import { createEvent, getEvents, eventReset } from "../features/event/eventSlice";
+import { useNavigate } from "react-router-dom";
+import {
+  createEvent,
+  getEvents,
+  eventReset,
+} from "../features/event/eventSlice";
 import { FcApproval } from "react-icons/fc";
 import { toast } from "react-toastify";
 
@@ -15,20 +20,32 @@ function EventPage() {
     type: "physical",
   });
 
+  const [editModalOpen, setEditModalOpen] = useState(false); // State for modal visibility
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+
   const { organizer, title, description, location, date, type } = eventData;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { events, isErrorEvent, isSuccessEvent, isLoadingEvent, messageEvent } =
     useSelector((state) => state.event);
+
+  const { admin, adminSuccess } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
     if (isErrorEvent) {
       toast.error(messageEvent);
     }
 
+    if (!adminSuccess || !admin) {
+      navigate("/admin");
+    }
+
     dispatch(getEvents());
   }, [dispatch, isErrorEvent, messageEvent, isSuccessEvent]);
-
 
   const onChange = (e) => {
     setEventData((prevState) => ({
@@ -39,12 +56,17 @@ function EventPage() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createEvent(eventData))
-    dispatch(eventReset())
+    dispatch(createEvent(eventData));
+    dispatch(eventReset());
   };
 
+
+  if(isLoadingEvent){
+
+  }
+
   return (
-    <div className="bg-secendoryColor font-inter">
+    <div className="relative bg-secendoryColor font-inter ">
       <AdminNavBar />
       <div className="container mx-auto pt-[100px]">
         <h1 className="text-center text-3xl font-semibold text-white mb-5">
@@ -52,7 +74,7 @@ function EventPage() {
         </h1>
 
         {/* create event */}
-        <div className="flex justify-center w-[400px] bg-white mx-auto rounded-xl p-5">
+        <div className=" flex justify-center w-[400px] bg-white mx-auto rounded-xl p-5">
           <form className="pt-4 w-full" onSubmit={onSubmit}>
             <div className="relative z-0 w-full mb-5 group">
               <input
@@ -193,7 +215,7 @@ function EventPage() {
                         Event Name
                       </th>
                       <th scope="col" className="px-6 py-3">
-                      Organizer
+                        Organizer
                       </th>
                       <th scope="col" className="px-6 py-3">
                         type
@@ -208,25 +230,32 @@ function EventPage() {
                   </thead>
                   <tbody>
                     {events.map((event) => {
-                      return(<tr key={event._id} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        {event.title}
-                      </th>
-                      <td className="px-6 py-4">{event.organizer}</td>
-                      <td className="px-6 py-4">{event.type}</td>
-                      <td className="px-6 py-4">{new Date(event.date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 flex gap-2">
-                        <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                          Edit
-                        </button>
-                        <button className="font-medium text-red-600 hover:underline">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>)
+                      return (
+                        <tr
+                          key={event._id}
+                          className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+                        >
+                          <th
+                            scope="row"
+                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {event.title}
+                          </th>
+                          <td className="px-6 py-4">{event.organizer}</td>
+                          <td className="px-6 py-4">{event.type}</td>
+                          <td className="px-6 py-4">
+                            {new Date(event.date).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 flex gap-2">
+                            <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                              Edit
+                            </button>
+                            <button className="font-medium text-red-600 hover:underline">
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
                     })}
                   </tbody>
                 </table>
@@ -235,6 +264,9 @@ function EventPage() {
           </div>
         </div>
       </div>
+
+      {/* edit popup modal */}
+     
     </div>
   );
 }
