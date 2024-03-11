@@ -18,6 +18,7 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 //@route GET/api/posts
 //@access private
 const getAllPosts = asyncHandler(async (req, res) => {
+  
   const posts = await Post.find();
 
   const formattedPosts = await Promise.all(
@@ -349,7 +350,7 @@ const commentPost = asyncHandler(async (req, res) => {
         title,
         description,
         image,
-        likes,
+        likes,  
         comments,
       } = updatedPost;
 

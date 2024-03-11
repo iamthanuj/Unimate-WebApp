@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminNavBar from "../components/Admin/AdminNavBar";
 import { useDispatch, useSelector } from "react-redux";
-import { createEvent } from "../features/event/eventSlice";
+import { createEvent, getEvents, eventReset } from "../features/event/eventSlice";
 import { FcApproval } from "react-icons/fc";
+import { toast } from "react-toastify";
 
 function EventPage() {
   const [eventData, setEventData] = useState({
-    organizer:"",
+    organizer: "",
     title: "",
     description: "",
     location: "",
@@ -17,7 +18,17 @@ function EventPage() {
   const { organizer, title, description, location, date, type } = eventData;
 
   const dispatch = useDispatch();
-  const { events } = useSelector((state) => state.event);
+  const { events, isErrorEvent, isSuccessEvent, isLoadingEvent, messageEvent } =
+    useSelector((state) => state.event);
+
+  useEffect(() => {
+    if (isErrorEvent) {
+      toast.error(messageEvent);
+    }
+
+    dispatch(getEvents());
+  }, [dispatch]);
+
 
   const onChange = (e) => {
     setEventData((prevState) => ({
@@ -29,20 +40,21 @@ function EventPage() {
   const onSubmit = async (e) => {
     e.preventDefault();
     dispatch(createEvent(eventData));
+    dispatch(eventReset())
   };
 
   return (
     <div className="bg-secendoryColor font-inter">
-      <AdminNavBar/>
+      <AdminNavBar />
       <div className="container mx-auto pt-[100px]">
-        <h1 className="text-center text-5xl font-semibold text-white mb-5">
-          List Your Event Here!
+        <h1 className="text-center text-3xl font-semibold text-white mb-5">
+          Events
         </h1>
 
         {/* create event */}
         <div className="flex justify-center w-[400px] bg-white mx-auto rounded-xl p-5">
           <form className="pt-4 w-full" onSubmit={onSubmit}>
-          <div className="relative z-0 w-full mb-5 group">
+            <div className="relative z-0 w-full mb-5 group">
               <input
                 type="text"
                 name="organizer"
@@ -57,7 +69,7 @@ function EventPage() {
                 htmlFor="floating_email"
                 className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                Organizer
+                Organizer email Address
               </label>
             </div>
             <div className="relative z-0 w-full mb-5 group">
@@ -165,7 +177,12 @@ function EventPage() {
 
         {/* display events list */}
         <div className="">
-          <h1 className="text-white font-semibold flex items-center">Active Events <span><FcApproval/></span></h1>
+          <h1 className="text-white font-semibold flex items-center">
+            Active Events{" "}
+            <span>
+              <FcApproval />
+            </span>
+          </h1>
           <div>
             <div>
               <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -176,10 +193,10 @@ function EventPage() {
                         Event Name
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        Title
+                      Organizer
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        Organizer
+                        type
                       </th>
                       <th scope="col" className="px-6 py-3">
                         Date
@@ -190,16 +207,17 @@ function EventPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                    {events.map((event) => {
+                      return(<tr key={event._id} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
-                        Apple MacBook Pro 17"
+                        {event.title}
                       </th>
-                      <td className="px-6 py-4">Silver</td>
-                      <td className="px-6 py-4">Laptop</td>
-                      <td className="px-6 py-4">$2999</td>
+                      <td className="px-6 py-4">{event.organizer}</td>
+                      <td className="px-6 py-4">{event.type}</td>
+                      <td className="px-6 py-4">{event.date}</td>
                       <td className="px-6 py-4 flex gap-2">
                         <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                           Edit
@@ -208,7 +226,8 @@ function EventPage() {
                           Delete
                         </button>
                       </td>
-                    </tr> 
+                    </tr>)
+                    })}
                   </tbody>
                 </table>
               </div>

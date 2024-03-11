@@ -7,7 +7,7 @@ const eventSchema = mongoose.Schema(
       ref: "User",
     },
 
-    postBy: {
+    organizer: {
       type: String,
       required: true,
     },

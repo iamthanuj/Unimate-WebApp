@@ -9,12 +9,33 @@ const initialState = {
   messageEvent: "",
 };
 
+
+//create event
 export const createEvent = createAsyncThunk(
   "events/create",
   async (eventData, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await eventService.createEvent(eventData, token);
+      return await eventService.createEvent(eventData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+
+//get all events
+export const getEvents = createAsyncThunk(
+  "events/getevents",
+  async (_d, thunkAPI) => {
+    try {
+      return await eventService.getEvents();
     } catch (error) {
       const message =
         (error.response &&
@@ -34,10 +55,29 @@ export const eventSlice = createSlice({
     eventReset: (state) => initialState,
   },
   extraReducers: (builder) => {
-    builder
+    builder.
+    
+    // create event
+    addCase(createEvent.fulfilled, (state, action) => {
+      state.isSuccessEvent = true;
+      state.isLoadingEvent = false;
+      state.isErrorEvent = false;
+      state.events = state.events.push(action.payload);
+    })
 
-    .addCase(createEvent.fulfilled, (state,action)=>{
-        console.log(action.payload)
+
+    .addCase(createEvent.rejected, (state,action)=>{
+      state.isSuccessEvent = false;
+      state.isLoadingEvent=false;
+      state.isErrorEvent = true;
+      state.messageEvent = action.payload;
+    })
+
+    .addCase(getEvents.fulfilled, (state, action)=>{
+      state.isSuccessEvent = true;
+      state.isErrorEvent = false;
+      state.isLoadingEvent = false;
+      state.events = action.payload;
     })
   },
 });

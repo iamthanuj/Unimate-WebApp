@@ -9,7 +9,6 @@ import EventsTab from "../components/EventsTab";
 import { getAllPosts, postReset } from "../features/post/postSlice";
 import { PropagateLoader } from "react-spinners/";
 
-
 function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,18 +22,17 @@ function HomePage() {
       navigate("/");
     }
 
-
-
     if (isErrorPost) {
       console.log(messagePost);
     }
 
     dispatch(getAllPosts());
 
-    return () => {8
+    return () => {
+      8;
       dispatch(postReset());
     };
-  }, [ navigate, isErrorPost, isLoading, messagePost, dispatch]);
+  }, [navigate, isErrorPost, isLoading, messagePost, dispatch]);
 
   if (isLoadingPost) {
     return (
@@ -59,7 +57,7 @@ function HomePage() {
             <FriendsList />
           </div>
           <div className="absolute pt-[100px] right-0">
-            <EventsTab/>  
+            <EventsTab />
           </div>
           <div className="pt-[100px] flex flex-col gap-14 ">
             <CreatePost />
@@ -67,7 +65,6 @@ function HomePage() {
               <Post key={post._id} allPostsDetails={post} /> // Use unique post ID as key
             ))}
           </div>
-          
         </div>
       </div>
     </div>
