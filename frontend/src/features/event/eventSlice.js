@@ -62,7 +62,7 @@ export const eventSlice = createSlice({
       state.isSuccessEvent = true;
       state.isLoadingEvent = false;
       state.isErrorEvent = false;
-      state.events = state.events.push(action.payload);
+      state.events = [...state.events, action.payload];;
     })
 
 
@@ -78,6 +78,13 @@ export const eventSlice = createSlice({
       state.isErrorEvent = false;
       state.isLoadingEvent = false;
       state.events = action.payload;
+    })
+
+    .addCase(getEvents.rejected, (state, action)=>{
+      state.isSuccessEvent = false;
+      state.isErrorEvent = true;
+      state.isLoadingEvent = false;
+      state.messageEvent = action.payload;
     })
   },
 });

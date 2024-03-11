@@ -3,7 +3,6 @@ const Event = require("../models/eventModel");
 const User = require("../models/userModel");
 
 const createEvent = asyncHandler(async (req, res) => {
-
   const email = req.body.organizer  
 
   if (await User.findOne({ email })) {
@@ -42,7 +41,6 @@ const createEvent = asyncHandler(async (req, res) => {
 
 
 const getAllEvents = asyncHandler(async(req,res)=>{
-
   const events = await Event.find();
   if(events){
     res.status(200).json(events)

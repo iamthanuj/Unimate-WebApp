@@ -177,10 +177,6 @@ const createPost = asyncHandler(async (req, res) => {
     };
     const command = new PutObjectCommand(prams);
     await s3.send(command);
-
-
-    
-
     res.status(200).json(post);
   }
 });

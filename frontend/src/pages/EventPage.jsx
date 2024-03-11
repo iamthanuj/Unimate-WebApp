@@ -27,7 +27,7 @@ function EventPage() {
     }
 
     dispatch(getEvents());
-  }, [dispatch]);
+  }, [dispatch, isErrorEvent, messageEvent, isSuccessEvent]);
 
 
   const onChange = (e) => {
@@ -39,7 +39,7 @@ function EventPage() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createEvent(eventData));
+    dispatch(createEvent(eventData))
     dispatch(eventReset())
   };
 
@@ -217,7 +217,7 @@ function EventPage() {
                       </th>
                       <td className="px-6 py-4">{event.organizer}</td>
                       <td className="px-6 py-4">{event.type}</td>
-                      <td className="px-6 py-4">{event.date}</td>
+                      <td className="px-6 py-4">{new Date(event.date).toLocaleDateString()}</td>
                       <td className="px-6 py-4 flex gap-2">
                         <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                           Edit
