@@ -4,6 +4,7 @@ import postService from "./postService";
 const initialState = {
   posts: [],
   allPosts: [],
+  adminPosts:[],
   isErrorPost: false,
   isSuccessPost: false,
   isLoadingPost: false,
@@ -116,6 +117,46 @@ export const commentPost = createAsyncThunk(
   }
 );
 
+
+
+//comment post
+export const getAllPostsAdmin = createAsyncThunk(
+  "posts/adminposts",
+  async (_, thunkAPI) => {
+    try {
+      return await postService.getAllAdminPosts();
+    } catch (error) {
+      (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+
+// Delete user post by admin
+export const adminDeletePost = createAsyncThunk(
+  "posts/deleteadmin",
+  async (postId, thunkAPI) => {
+    try {
+      return await postService.adminDeletePost(postId);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+
+
 export const postSlice = createSlice({
   name: "post",
   initialState,
@@ -213,7 +254,40 @@ export const postSlice = createSlice({
         state.isSuccessPost= false;
         state.isLoadingPost = false,
         state.messagePost = action.payload;
+      })
+
+
+      //getAdmin all posts
+      .addCase(getAllPostsAdmin.fulfilled, (state, action) => {
         console.log(action.payload)
+        state.isLoadingPost = false;
+        state.isSuccessPost = true;
+        state.adminPosts = action.payload;
+      })
+
+      .addCase(getAllPostsAdmin.rejected, (state, action)=>{
+        state.isErrorPost = true;
+        state.isSuccessPost= false;
+        state.isLoadingPost = false,
+        state.messagePost = action.payload;
+      })
+
+
+      //delete post by admin
+      .addCase(adminDeletePost.fulfilled, (state, action)=>{
+        state.isSuccessPost = true;
+        console.log(action.payload)
+        
+        state.adminPosts = state.adminPosts.filter(
+          (post)=> post._id !== action.payload.id 
+        )
+      })
+
+      .addCase(adminDeletePost.rejected, (state, action)=>{
+        state.isErrorPost = true;
+        state.isSuccessPost= false;
+        state.isLoadingPost = false,
+        state.messagePost = action.payload;
       })
 
   },

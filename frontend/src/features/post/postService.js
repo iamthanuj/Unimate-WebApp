@@ -84,6 +84,24 @@ const commentPost = async(commentData, token)=>{
 
 
 
+//gett all posts for admin
+const getAllAdminPosts = async () => {
+
+  const response = await axios.get(API_URL +"adminall");
+
+  return response.data;
+};
+
+
+
+// Delete user post by admin
+const adminDeletePost = async (postId) => {
+  
+  const response = await axios.delete(API_URL+"admindelete/"+postId,{});
+  return response.data;
+};
+
+
 const postService = {
   createPost,
   getUserPosts,
@@ -91,6 +109,8 @@ const postService = {
   getAllPosts,
   likePost,
   commentPost,
+  getAllAdminPosts,
+  adminDeletePost,
 };
 
 export default postService;

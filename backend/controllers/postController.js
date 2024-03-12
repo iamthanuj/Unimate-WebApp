@@ -411,6 +411,43 @@ const commentPost = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+// n
+//@desc get all posts for admi
+//@route GET/api/posts/adminall
+//@access private
+const adminAllPosts = asyncHandler(async (req, res) => {
+  
+  const posts = await Post.find();
+
+  console.log(posts)
+
+  res.status(200).json(posts);
+});
+
+
+
+//@desc admin delete posts
+//@route PUT /api/posts/admindelete
+//@access private
+const adminDeletePost = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    res.status(400);
+    throw new Error("Post Not Found");
+  }
+
+  console.log(post)
+
+  await Post.deleteOne();
+
+  res.status(200).json({ id: req.params.id });
+});
+
+
+
 //Generate RND image name
 const randomImageName = (bytes = 32) =>
   crypto.randomBytes(bytes).toString("hex");
@@ -423,4 +460,6 @@ module.exports = {
   deletePost,
   likePost,
   commentPost,
+  adminAllPosts,
+  adminDeletePost
 };

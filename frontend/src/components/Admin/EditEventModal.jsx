@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 
 function EditEventModal({ selectedEvent, onUpdate, onClose }) {
   const [editedEvent, setEditedEvent] = useState(selectedEvent || {});
@@ -12,7 +11,7 @@ function EditEventModal({ selectedEvent, onUpdate, onClose }) {
     const { name, value } = e.target;
     setEditedEvent((prevEvent) => ({
       ...prevEvent,
-      [name]: value,
+      [name]: value, 
     }));
   };
 
