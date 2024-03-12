@@ -15,9 +15,30 @@ const getEvents = async()=>{
 }
 
 
+
+//update events
+const updateEvent = async(updatedEvent)=>{
+  const data = updatedEvent.updatedEventData;
+  const response = await axios.put(API_URL+"edit/"+`${updatedEvent._id}`,data);
+  return response.data;
+}
+
+
+//delete events
+const  deleteEvent = async(eventId)=>{
+  const response = await axios.delete(API_URL+"delete/"+eventId,{});
+  return response.data;
+}
+
+
+
+
+
 const eventService = {
   createEvent,
   getEvents,
+  updateEvent,
+  deleteEvent,
 };
 
 export default eventService;

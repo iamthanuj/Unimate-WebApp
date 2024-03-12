@@ -48,6 +48,50 @@ export const getEvents = createAsyncThunk(
   }
 );
 
+
+
+
+//edit event
+export const updateEvent = createAsyncThunk(
+  "events/update",
+  async (updatedEvent, thunkAPI) => {
+    try {
+      return await eventService.updateEvent(updatedEvent);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+//delete event
+export const deleteEvent = createAsyncThunk(
+  "events/delete",
+  async (eventId, thunkAPI) => {
+    try {
+      return await eventService.deleteEvent(eventId);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+
+
+
 export const eventSlice = createSlice({
   name: "event",
   initialState,
@@ -62,7 +106,7 @@ export const eventSlice = createSlice({
       state.isSuccessEvent = true;
       state.isLoadingEvent = false;
       state.isErrorEvent = false;
-      state.events = [...state.events, action.payload];;
+      state.events = [...state.events, action.payload];
     })
 
 
@@ -73,6 +117,8 @@ export const eventSlice = createSlice({
       state.messageEvent = action.payload;
     })
 
+
+    //get events
     .addCase(getEvents.fulfilled, (state, action)=>{
       state.isSuccessEvent = true;
       state.isErrorEvent = false;
@@ -86,6 +132,47 @@ export const eventSlice = createSlice({
       state.isLoadingEvent = false;
       state.messageEvent = action.payload;
     })
+
+
+    //update events
+    .addCase(updateEvent.fulfilled, (state, action)=>{
+      state.isSuccessEvent = true;
+      state.isErrorEvent = false;
+      state.isLoadingEvent = false;
+      
+      const updatedPost = state.events.map((event) => {
+        if (event._id === action.payload._id) return action.payload;
+        return event;
+      });
+      state.events = updatedPost;
+    })
+
+    .addCase(updateEvent.rejected, (state, action) => {
+      state.isSuccessEvent = false;
+      state.isErrorEvent = true;
+      state.isLoadingEvent = false;
+      state.messageEvent = action.payload;
+    })
+
+    .addCase(updateEvent.pending, (state, action) => {
+      state.isLoadingEvent = true;
+    })
+
+
+    //delete events
+    .addCase(deleteEvent.fulfilled, (state, action)=>{
+      state.isSuccessEvent = true;
+      state.isErrorEvent = false;
+      state.isLoadingEvent = false;
+      
+      console.log(action.payload)
+
+      state.events = state.events.filter(
+        (event)=> event._id !== action.payload.id 
+      )
+    })
+
+
   },
 });
 
