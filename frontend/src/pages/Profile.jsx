@@ -1,20 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import pofileBG from "../assets/design/profileBG.png";
 import NavBar from "../components/NavBar";
 import Post from "../components/Post";
+import EditProfileModal from "../components/EditProfileModal";
 import { useSelector, useDispatch } from "react-redux";
 import { getPosts, postReset } from "../features/post/postSlice";
+import { updateProfile } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { PropagateLoader } from "react-spinners/";
 
 function Profile() {
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
+  const { user , isSuccess, message, isError} = useSelector((state) => state.auth);
 
   const { posts, isLoadingPost, isErrorPost, messagePost } = useSelector(
     (state) => state.post
   );
+
+
+
+    // State variables for edit modal
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editedUserInfo, setEditedUserInfo] = useState({
+      firstName: user.name,
+      university: user.university,
+      email: user.email,
+      phone: user.phone,
+    });
+
 
   useEffect(() => {
     dispatch(getPosts());
@@ -22,7 +36,20 @@ function Profile() {
     if (isErrorPost) {
       toast.error(messagePost);
     }
-  }, [dispatch]);
+  }, [dispatch, isSuccess]);
+
+
+
+
+  const handleSaveChanges = () => {
+    console.log(editedUserInfo)
+    // Dispatch action to update user profile
+    dispatch(updateProfile(editedUserInfo));
+    // Close the modal after saving changes
+    setIsEditModalOpen(false);
+  };
+
+
 
   if (isLoadingPost) {
     return (
@@ -65,7 +92,9 @@ function Profile() {
               </div>
             </div>
             <div className="flex items-center">
-              <button className="bg-secendoryColor p-3 rounded-lg text-white">
+              <button 
+              onClick={() => setIsEditModalOpen(true)}
+              className="bg-secendoryColor hover:bg-mainColor p-3 rounded-lg text-white">
                 Edit Profile
               </button>
             </div>
@@ -107,6 +136,14 @@ function Profile() {
           <Post key={userPost._id} allPostsDetails={userPost} /> // Use unique post ID as key
         ))}
       </div>
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        editedUserInfo={editedUserInfo}
+        setEditedUserInfo={setEditedUserInfo}
+        onSaveChanges={handleSaveChanges}
+      />
     </>
   );
 }

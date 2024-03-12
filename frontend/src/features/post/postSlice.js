@@ -213,6 +213,7 @@ export const postSlice = createSlice({
 
       .addCase(getAllPosts.rejected, (state, action) => {
         state.isLoadingPost = false;
+        state.isSuccessPost = false;
         state.isErrorPost = true;
         state.messagePost = action.payload;
       })

@@ -132,6 +132,29 @@ export const adminDeleteUser = createAsyncThunk(
 
 
 
+//update user profile
+export const updateProfile = createAsyncThunk(
+  "auth/updateprofile",
+  async (userData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await authService.updateUserProfile(userData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+
+
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -230,6 +253,21 @@ export const authSlice = createSlice({
         state.isLoading = false,
         state.message = action.payload;
       })
+
+
+        //user profile update
+        .addCase(updateProfile.fulfilled, (state, action)=>{
+          console.log(action.payload)
+          state.isSuccess = true;
+        })
+  
+        .addCase(updateProfile.rejected, (state, action)=>{
+          state.isError = true;
+          state.isSuccess= false;
+          state.isLoading = false,
+          state.message = action.payload;
+        })
+  
 
   },
 });

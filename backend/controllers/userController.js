@@ -157,10 +157,42 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+
 //@desc login admin
 //@route SET/api/users/adminlogin
 //@access Private
+const updateUserProfile = asyncHandler(async(req,res)=>{
+  const id = req.user.id
 
+  if(!req.body){
+    res.status(400)
+    throw new Error("Pleas enter value")
+  }
+  else{
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+      new:true
+    })
+
+    res.status(200).json(updatedUser);
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+//@desc login admin
+//@route SET/api/users/adminlogin
+//@access Private
 const adminLogin = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   if (username === "admin@unimate.com" && password === "P@ssword1234") {
@@ -359,4 +391,5 @@ module.exports = {
   adminLogin,
   getAllUsers,
   deleteUserAdmin,
+  updateUserProfile,
 };

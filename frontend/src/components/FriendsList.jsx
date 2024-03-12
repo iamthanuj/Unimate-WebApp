@@ -39,7 +39,7 @@ function FriendsList() {
         </div>
         <div>
           {!friends ? (
-            "No Friends"
+            <p className=" text-center mt-3">No Followes</p>
           ) : (
             <div className="divide-y h-[500px] divide-solid divide-gray-200 overflow-y-scroll">
               {/* Friend Item */}

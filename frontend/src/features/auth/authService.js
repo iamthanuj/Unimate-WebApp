@@ -77,6 +77,24 @@ const adminDeleteUser = async (userId)=>{
 
 
 
+
+//update User profile
+
+const updateUserProfile = async(userData, token)=>{
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json', 
+      },
+    };
+  
+    const response = await axios.put(API_URL+"updateuser/",userData,config)
+    return response.data;
+  }
+  
+
+
+
 const authService = {
     register,
     logout,
@@ -84,7 +102,8 @@ const authService = {
     addRemoveFriend,
     adminLogin,
     getAdminAllUsers,
-    adminDeleteUser
+    adminDeleteUser,
+    updateUserProfile
 }
 
 export default authService

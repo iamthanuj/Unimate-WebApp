@@ -238,7 +238,7 @@ const deletePost = asyncHandler(async (req, res) => {
     throw new Error("user not authorized");
   }
 
-  await Post.deleteOne();
+  await post.deleteOne();
   res.status(200).json({ id: req.params.id });
 });
 

@@ -17,6 +17,9 @@ function Register({ logToggle }) {
     password2: "",
   });
 
+  const [agreementChecked, setAgreementChecked] = useState(false);
+  const [iseModalOpen, setIsModalOpen] = useState(false);
+
   const {
     firstName,
     lastName,
@@ -41,7 +44,7 @@ function Register({ logToggle }) {
     }
 
     if (isSuccess || user) {
-      navigate("/home")
+      navigate("/home");
     }
 
     dispatch(reset());
@@ -59,14 +62,21 @@ function Register({ logToggle }) {
     }
   };
 
+  const handleAgreementChange = (e) => {
+    setAgreementChecked(e.target.checked);
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    if (!agreementChecked) {
+      toast.error("Please agree to the terms and conditions.");
+      return;
+    }
 
     if (password !== password2) {
       toast.error("Password do not match");
     } else {
- 
-
       const formData = new FormData();
       formData.append("firstName", firstName);
       formData.append("lastName", lastName);
@@ -84,10 +94,22 @@ function Register({ logToggle }) {
         email: "",
         password: "",
         password2: "",
-        avatar: null, 
+        avatar: null,
       });
     }
   };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(!iseModalOpen);
+    setAgreementChecked(false);
+
+  };
+
+  const handleAgreement = ()=>{
+    setIsModalOpen(false);
+    setAgreementChecked(true);
+  }
+
 
   if (isLoading) {
     return <PuffLoader color="#E81F03" size={60} className="mx-auto" />;
@@ -242,6 +264,26 @@ function Register({ logToggle }) {
             onChange={onChange}
           />
         </div>
+        <div className="mb-5">
+          <input
+            type="checkbox"
+            id="agreement"
+            name="agreement"
+            checked={agreementChecked}
+            onChange={handleAgreementChange}
+            required
+          />
+          <label htmlFor="agreement" className="ml-2">
+            I agree to the terms and conditions
+          </label>
+          <button
+          type="button"
+            onClick={handleCloseModal}
+            className="ml-1 text-yellow-500 font-bold"
+          >
+            Read*
+          </button>
+        </div>
         <div className="flex justify-center">
           <button
             type="submit"
@@ -262,6 +304,97 @@ function Register({ logToggle }) {
           Sign in
         </button>
       </p>
+
+      {/* delete popup modal */}
+      {iseModalOpen && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+            >
+              <div className="absolute inset-0 bg-mainColor opacity-80"></div>
+            </div>
+
+            <span
+              className="hidden sm:inline-block sm:align-middle sm:h-screen"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <div className="inline-block align-bottom  rounded-lg text-left overflow-hidden  transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div>
+                <div className="relative p-4 w-full max-w-md max-h-full">
+                  <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <button
+                      onClick={handleCloseModal}
+                      type="button"
+                      className="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                      data-modal-hide="popup-modal"
+                    >
+                      <svg
+                        className="w-3 h-3"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 14"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                        />
+                      </svg>
+                      <span className="sr-only">Close modal</span>
+                    </button>
+                    <div className="p-4 md:p-5 flex flex-col items-center gap-4 bg-white ">
+                      <h1 className="font-bold text-mainColor">Terms and condition</h1>
+                      <p className="w-[300px] text-center text-wrap text-[14px] text-black">
+                        By registering on Unimate, users agree to comply with
+                        all applicable laws and regulations, affirm their
+                        current university or college student status, and
+                        maintain the security of their account credentials. They
+                        must refrain from uploading offensive or harmful
+                        content, respect intellectual property rights, and
+                        adhere to a professional code of conduct, prohibiting
+                        harassment and disruptive behavior. Unimate collects and
+                        processes personal data according to its Privacy Policy,
+                        and all platform content and intellectual property
+                        belong to Unimate. Termination of accounts may occur for
+                        violations, and users are informed of changes to terms,
+                        implying acceptance upon continued use. Unimate
+                        disclaims liability for damages incurred from platform
+                        use, emphasizing user acknowledgment of the associated
+                        risks. 
+                      </p>
+                      <div>
+                        <button
+                          onClick={handleAgreement}
+                          data-modal-hide="popup-modal"
+                          type="button"
+                          className="text-white bg-mainColor hover:bg-secendoryColor focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                        >
+                          Yes, I Agree
+                        </button>
+                        <button
+                          onClick={handleCloseModal}
+                          data-modal-hide="popup-modal"
+                          type="button"
+                          className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                        >
+                          No, cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
