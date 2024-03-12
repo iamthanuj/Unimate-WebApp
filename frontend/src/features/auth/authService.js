@@ -40,8 +40,6 @@ const adminLogin = async (adminData)=>{
 
 
 
-
-
 //logout
 const logout = ()=>{
     localStorage.removeItem('user')
@@ -64,12 +62,29 @@ const addRemoveFriend = async (friendData,token)=>{
 
 
 
+// get all users for admin 
+const getAdminAllUsers = async ()=>{
+    const response = await axios.get(API_URL+"allusers",{})
+    return response.data;
+}
+
+
+// dlelete user for admin 
+const adminDeleteUser = async (userId)=>{
+    const response = await axios.delete(API_URL+"deleteUserAdmin/"+userId,{})
+    return response.data;
+}
+
+
+
 const authService = {
     register,
     logout,
     login,
     addRemoveFriend,
     adminLogin,
+    getAdminAllUsers,
+    adminDeleteUser
 }
 
 export default authService

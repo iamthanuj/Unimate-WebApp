@@ -2,53 +2,57 @@ import React, { useEffect, useState } from "react";
 import AdminNavBar from "../components/Admin/AdminNavBar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllPostsAdmin, adminDeletePost } from "../features/post/postSlice";
+import { getAdminAllUsers , adminDeleteUser } from "../features/auth/authSlice";
 import { FcApproval } from "react-icons/fc";
 import { toast } from "react-toastify";
 
-function AdminPost() {
+function AdminUserManage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { adminPosts, isErrorPost, isSuccessPost, isLoadingPost, messagePost } =
-    useSelector((state) => state.post);
-
-  const { admin, adminSuccess } = useSelector((state) => state.auth);
+  const {
+    admin,
+    adminSuccess,
+    allUsersAdmin,
+    isLoading,
+    isError,
+    isSuccess,
+    message,
+  } = useSelector((state) => state.auth);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State for modal visibility
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    if (isErrorPost) {
-      toast.error(messagePost);
+    if (isError) {
+      toast.error(message);
     }
 
     if (!adminSuccess || !admin) {
       navigate("/admin");
     }
 
-    dispatch(getAllPostsAdmin());
-  }, [dispatch, isErrorPost, messagePost, isSuccessPost]);
+    dispatch(getAdminAllUsers());
+  }, [dispatch, isError, isLoading, isSuccess, message]);
 
   // Function to open modal and set selected event
-  const handleDeleteClick = (post) => {
-    console.log(post);
+  const handleDeleteClick = (user) => {
     setDeleteModalOpen(true);
-    setSelectedPost(post);
+    setSelectedUser(user);
   };
 
   // Function to close modal
   const handleCloseModal = () => {
     setDeleteModalOpen(false);
-    setSelectedPost(null);
+    setSelectedUser(null);
   };
 
-  const handleDeletePost = async () => {
-    const postId = selectedPost._id;
-    dispatch(adminDeletePost(postId));
+  const handleDeleteUser = async () => {
+    const userId = selectedUser._id;
+    dispatch(adminDeleteUser(userId));
     setDeleteModalOpen(false);
-    if (isSuccessPost) {
-      toast.success("Post Deleted");
+    if (isSuccess) {
+      toast.success("User Deleted");
     }
   };
 
@@ -57,12 +61,12 @@ function AdminPost() {
       <AdminNavBar />
       <div className="container  mx-auto pt-[150px]">
         <div className="text-center text-3xl font-semibold text-white mb-5">
-          <h1>Manage User Posts</h1>
+          <h1>Manage User Accounts</h1>
         </div>
-        {/* display events list */}
+        {/* display user list */}
         <div className="">
           <h1 className="text-white font-semibold flex items-center">
-            Active Posts{" "}
+            Active User Profiles{" "}
             <span>
               <FcApproval />
             </span>
@@ -74,16 +78,16 @@ function AdminPost() {
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                       <th scope="col" className="px-6 py-3">
-                        Post Title
+                        Name
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        User
+                        Email
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        name
+                        University
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        Date
+                        Created Date
                       </th>
                       <th scope="col" className="px-6 py-3">
                         Action
@@ -91,26 +95,26 @@ function AdminPost() {
                     </tr>
                   </thead>
                   <tbody>
-                    {adminPosts.map((post) => {
+                    {allUsersAdmin.map((user) => {
                       return (
                         <tr
-                          key={post._id}
+                            key={user._id}
                           className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
                         >
                           <th
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {post.title}
+                            {`${user.firstName} ${user.lastName}`}
                           </th>
-                          <td className="px-6 py-4">Student</td>
-                          <td className="px-6 py-4">{post.author}</td>
+                          <td className="px-6 py-4">{user.email}</td>
+                          <td className="px-6 py-4">{user.university}</td>
                           <td className="px-6 py-4">
-                            {new Date(post.createdAt).toLocaleDateString()}
+                            {new Date(user.createdAt).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 flex gap-2">
                             <button
-                              onClick={() => handleDeleteClick(post)}
+                                onClick={() => handleDeleteClick(user)}
                               className="font-medium text-red-600 hover:underline"
                             >
                               Delete
@@ -126,7 +130,6 @@ function AdminPost() {
           </div>
         </div>
       </div>
-
       {/* delete popup modal */}
       {deleteModalOpen && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
@@ -188,10 +191,10 @@ function AdminPost() {
                         />
                       </svg>
                       <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                        Are you sure you want to delete this Post?
+                        Are you sure you want to delete this User?
                       </h3>
                       <button
-                        onClick={handleDeletePost}
+                        onClick={handleDeleteUser}
                         data-modal-hide="popup-modal"
                         type="button"
                         className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
@@ -218,4 +221,4 @@ function AdminPost() {
   );
 }
 
-export default AdminPost;
+export default AdminUserManage;

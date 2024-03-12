@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //image
   const generatedAvatar = randomAvatarName();
-  
+
   //create user
   const user = await User.create({
     firstName,
@@ -109,14 +109,30 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const formattedFriends = await Promise.all(
       friends.map(
-        async({ _id, firstName, lastName, email, phone, university, avatar }) => {
+        async ({
+          _id,
+          firstName,
+          lastName,
+          email,
+          phone,
+          university,
+          avatar,
+        }) => {
           const getObjectParams = {
             Bucket: bucketName,
             Key: avatar,
           };
           const command = new GetObjectCommand(getObjectParams);
-          const url = await  getSignedUrl(s3, command, { expiresIn: 3600 });
-          return { _id, firstName, lastName, email, phone, university, avatar:url };
+          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          return {
+            _id,
+            firstName,
+            lastName,
+            email,
+            phone,
+            university,
+            avatar: url,
+          };
         }
       )
     );
@@ -141,23 +157,20 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-
 //@desc login admin
 //@route SET/api/users/adminlogin
 //@access Private
 
-const adminLogin = asyncHandler(async(req,res)=>{
-  const {username, password} = req.body;
-  if(username==="admin@unimate.com" && password==="P@ssword1234"){
-    const access = {username, status:true}
-    res.status(200).json(access)
-  }else{
-    res.status(400)
-    throw new Error("Wrong credentials")
-  } 
-})
-
-
+const adminLogin = asyncHandler(async (req, res) => {
+  const { username, password } = req.body;
+  if (username === "admin@unimate.com" && password === "P@ssword1234") {
+    const access = { username, status: true };
+    res.status(200).json(access);
+  } else {
+    res.status(400);
+    throw new Error("Wrong credentials");
+  }
+});
 
 //@desc get user details
 //@route GET/api/users/me
@@ -231,7 +244,7 @@ const addRemoveFriend = asyncHandler(async (req, res) => {
     const { friendId } = req.body;
     const userId = req.user.id;
 
-    console.log(friendId)
+    console.log(friendId);
 
     const user = await User.findById(userId);
     const friend = await User.findById(friendId);
@@ -294,6 +307,38 @@ const addRemoveFriend = asyncHandler(async (req, res) => {
   }
 });
 
+//@desc get all users for admin
+//@route GET/api/users/allusers
+//@access private
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find();
+
+  res.status(200).json(users);
+});
+
+//@desc delete user by admin
+//@route DELETE /api/users/userdelete/:id
+//@access private
+const deleteUserAdmin = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      res.status(404).json({ message: "User Not Found" });
+      return;
+    }
+
+    console.log(user)
+
+    await user.deleteOne();
+
+    res.status(200).json({ message: "User deleted successfully", id: req.params.id });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 //Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -312,4 +357,6 @@ module.exports = {
   getUserFriends,
   addRemoveFriend,
   adminLogin,
+  getAllUsers,
+  deleteUserAdmin,
 };

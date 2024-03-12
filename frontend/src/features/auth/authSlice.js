@@ -12,6 +12,7 @@ const initialState = {
   isLoading: false,
   message: "",
   friendList: [],
+  allUsersAdmin:[],
 };
 
 //register User
@@ -68,6 +69,7 @@ export const logout = createAsyncThunk("auth/logout", async () => {
   await authService.logout();
 });
 
+
 //add friend
 export const addRemoveFriend = createAsyncThunk(
   "auth/addFriend",
@@ -86,6 +88,49 @@ export const addRemoveFriend = createAsyncThunk(
     }
   }
 );
+
+
+//get admin all users
+//get all events
+export const getAdminAllUsers = createAsyncThunk(
+  "auth/allusers",
+  async (_, thunkAPI) => {
+    try {
+      return await authService.getAdminAllUsers();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+//get admin all users
+//get all events
+export const adminDeleteUser = createAsyncThunk(
+  "auth/deleteUser",
+  async (userId, thunkAPI) => {
+    try {
+      return await authService.adminDeleteUser(userId);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+
+
 
 export const authSlice = createSlice({
   name: "auth",
@@ -157,6 +202,32 @@ export const authSlice = createSlice({
 
       .addCase(adminLogin.rejected, (state, action)=>{
         state.adminSuccess = false;
+        state.message = action.payload;
+      })
+
+
+      //get alla users admin
+      .addCase(getAdminAllUsers.fulfilled, (state, action)=>{
+        state.isSuccess = true;
+        state.isError = false;
+        state.isLoading = false;
+        state.allUsersAdmin = action.payload;
+      })
+
+
+       //user delete  by admin
+       .addCase(adminDeleteUser.fulfilled, (state, action)=>{
+        console.log(action.payload)
+        state.isSuccess = true;
+        state.allUsersAdmin = state.allUsersAdmin.filter(
+          (user)=> user._id !== action.payload.id 
+        )
+      })
+
+      .addCase(adminDeleteUser.rejected, (state, action)=>{
+        state.isError = true;
+        state.isSuccess= false;
+        state.isLoading = false,
         state.message = action.payload;
       })
 

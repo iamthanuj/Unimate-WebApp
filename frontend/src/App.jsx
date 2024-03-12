@@ -6,6 +6,7 @@ import EventPage from './pages/EventPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminHomePage from './pages/AdminHomePage';
 import AdminPost from './pages/AdminPost';
+import AdminUserManage from './pages/AdminUserManage';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,6 +22,7 @@ function App() {
           <Route path='/adminpanel' element={<AdminHomePage/>}></Route>
           <Route path='/events' element={<EventPage/>}></Route>
           <Route path='/postmanage' element={<AdminPost/>}></Route>
+          <Route path='/usermanage' element={<AdminUserManage/>}></Route>
         </Routes>
       </BrowserRouter>
       <ToastContainer/>

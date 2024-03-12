@@ -421,8 +421,6 @@ const adminAllPosts = asyncHandler(async (req, res) => {
   
   const posts = await Post.find();
 
-  console.log(posts)
-
   res.status(200).json(posts);
 });
 
@@ -440,8 +438,7 @@ const adminDeletePost = asyncHandler(async (req, res) => {
   }
 
   console.log(post)
-
-  await Post.deleteOne();
+  await post.deleteOne();
 
   res.status(200).json({ id: req.params.id });
 });

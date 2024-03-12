@@ -259,7 +259,6 @@ export const postSlice = createSlice({
 
       //getAdmin all posts
       .addCase(getAllPostsAdmin.fulfilled, (state, action) => {
-        console.log(action.payload)
         state.isLoadingPost = false;
         state.isSuccessPost = true;
         state.adminPosts = action.payload;
@@ -276,8 +275,6 @@ export const postSlice = createSlice({
       //delete post by admin
       .addCase(adminDeletePost.fulfilled, (state, action)=>{
         state.isSuccessPost = true;
-        console.log(action.payload)
-        
         state.adminPosts = state.adminPosts.filter(
           (post)=> post._id !== action.payload.id 
         )
