@@ -32,16 +32,13 @@ const getUserPosts = async (token) => {
 
 
 //update post
-
 const updatePost = async (updateData,token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-
-  const response = await axios.get(API_URL+"update/"+updateData.id,updateData,config);
-
+  const response = await axios.put(API_URL+"update/"+updateData._id,updateData,config);
   return response.data;
 };
 
@@ -105,9 +102,7 @@ const commentPost = async(commentData, token)=>{
 
 //gett all posts for admin
 const getAllAdminPosts = async () => {
-
   const response = await axios.get(API_URL +"adminall");
-
   return response.data;
 };
 
@@ -130,6 +125,7 @@ const postService = {
   commentPost,
   getAllAdminPosts,
   adminDeletePost,
+  updatePost,
 };
 
 export default postService;

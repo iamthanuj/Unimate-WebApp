@@ -135,7 +135,6 @@ export const getAllPostsAdmin = createAsyncThunk(
 );
 
 
-
 // Delete user post by admin
 export const adminDeletePost = createAsyncThunk(
   "posts/deleteadmin",
@@ -155,6 +154,24 @@ export const adminDeletePost = createAsyncThunk(
 );
 
 
+//updatePost
+export const updatePost = createAsyncThunk(
+  "posts/update",
+  async (updateData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await postService.updatePost(updateData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 
 export const postSlice = createSlice({
@@ -285,6 +302,36 @@ export const postSlice = createSlice({
         state.isErrorPost = true;
         state.isSuccessPost= false;
         state.isLoadingPost = false,
+        state.messagePost = action.payload;
+      })
+
+
+      .addCase(updatePost.fulfilled, (state,action)=>{
+        state.isSuccessPost = true;
+        state.isErrorPost = false;
+        state.isLoadingPost = false;
+        state.posts.push(action.payload);
+      })
+
+
+      .addCase(updatePost.rejected, (state,action)=>{
+
+        const updatedPost = action.payload;
+        const postIdToUpdate = updatedPost.id;
+
+        console.log(updatePost)
+        // Find the index of the post to update
+        const postIndex = state.allPosts.findIndex(post => post.id === postIdToUpdate);
+
+
+        if (postIndex !== -1) {
+          state.allPosts[postIndex].title = updatedPost.title;
+          state.allPosts[postIndex].description = updatePost.description;
+        }
+
+        state.isSuccessPost = false;
+        state.isErrorPost = true;
+        state.isLoadingPost = false;
         state.messagePost = action.payload;
       })
 

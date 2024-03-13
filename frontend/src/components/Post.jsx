@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { likePost, commentPost, deletePost } from "../features/post/postSlice";
+import PostEditModal from "./PostEditModal";
+import {
+  likePost,
+  commentPost,
+  deletePost,
+  updatePost,
+} from "../features/post/postSlice";
 import { addRemoveFriend } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import CommentComp from "./CommentComp";
-import { IoPersonAddSharp, IoPersonRemoveSharp,IoTrashOutline  } from "react-icons/io5";
+import {
+  IoPersonAddSharp,
+  IoTrashOutline,
+} from "react-icons/io5";
 
 import {
   BiLike,
@@ -27,17 +36,21 @@ function Post({ allPostsDetails }) {
   } = allPostsDetails;
 
   const postUser = allPostsDetails.user;
-
   const [commentToggle, setCommentToggle] = useState(false);
   const [comment, setComment] = useState("");
+
+  // State variables for edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedPostInfo, setEditedPostInfo] = useState({
+    title,
+    description
+  });
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   const isLiked = Boolean(likes[user._id]);
   const likeCount = Object.keys(likes).length;
-
-  
 
   const handleLike = () => {
     dispatch(likePost(_id));
@@ -63,25 +76,40 @@ function Post({ allPostsDetails }) {
     }
   };
 
-  const handleAddFriend = async()=>{
-
+  const handleAddFriend = async () => {
     const friendData = {
-      friendId : postUser,
-    }
+      friendId: postUser,
+    };
 
-    dispatch(addRemoveFriend(friendData))
-  }
+    dispatch(addRemoveFriend(friendData));
+  };
+
+  const handlePostDelete = async (postId) => {
+    dispatch(deletePost(postId));
+  };
 
 
-  const handlePostDelete = async(postId)=>{
-    dispatch(deletePost(postId))
-  }
+  //handle edit post
+  const handlePostEdite = async () => {
+    setIsEditModalOpen(true)
+  };
 
 
-  const handlePostEdite = async(postId) =>{
+  const handleSaveChanges = async() => {
+
     
-  }
+    const updateData = {
+      _id,
+      title:editedPostInfo.title,
+      description:editedPostInfo.description,
+    }
+    
+    console.log(updateData)
 
+    dispatch(updatePost(updateData));
+    // Close the modal after saving changes
+    setIsEditModalOpen(false);
+  };
 
 
   return (
@@ -111,27 +139,30 @@ function Post({ allPostsDetails }) {
           </div>
           {/* Follow or remove buttons */}
           <div className="flex flex-col gap-1">
-          {postUser === user._id ? (
-            <button 
-            onClick={()=>{handlePostDelete(_id)}}
-            className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
-              Delete <IoTrashOutline />
-            </button>
-          ) : (
-            <button 
-            onClick={handleAddFriend}
-            className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
-              Follow <IoPersonAddSharp />
-            </button>
-          )}
-          {postUser === user._id && (
-            <button
-            
-            className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100"
-            >
-              Edit
-            </button>
-          )}
+            {postUser === user._id ? (
+              <button
+                onClick={() => {
+                  handlePostDelete(_id);
+                }}
+                className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100"
+              >
+                Delete <IoTrashOutline />
+              </button>
+            ) : (
+              <button
+                onClick={handleAddFriend}
+                className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100"
+              >
+                Follow <IoPersonAddSharp />
+              </button>
+            )}
+            {postUser === user._id && (
+              <button
+              onClick={handlePostEdite}
+              className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100">
+                Edit
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -215,6 +246,16 @@ function Post({ allPostsDetails }) {
         </motion.div>
       ) : (
         ""
+      )}
+
+      {/* edite post modal */}
+      {setIsEditModalOpen &&(
+        <PostEditModal  isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)}
+        editedPostInfo={editedPostInfo}
+        setEditedPostInfo={setEditedPostInfo}
+        onSaveChanges={handleSaveChanges}
+        />
       )}
     </motion.div>
   );
