@@ -25,7 +25,7 @@ function ViewMentorModal({ selectedMentor, onClose }) {
 
         <div className="mb-4">
           <p className="text-sm font-medium text-gray-600">Expertise:</p>
-          <p className="text-lg text-gray-800">{new Date(selectedMentor.expertise).toLocaleDateString()}</p>
+          <p className="text-lg text-gray-800">{selectedMentor.expertise}</p>
         </div>
 
         <div className="mb-4">
