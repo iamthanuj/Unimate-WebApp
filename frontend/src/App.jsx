@@ -8,6 +8,7 @@ import AdminHomePage from './pages/AdminHomePage';
 import AdminPost from './pages/AdminPost';
 import AdminUserManage from './pages/AdminUserManage';
 import AdminMentorManage from './pages/AdminMentorManage';
+import Helps from './pages/Helps';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -25,6 +26,7 @@ function App() {
           <Route path='/postmanage' element={<AdminPost/>}></Route>
           <Route path='/usermanage' element={<AdminUserManage/>}></Route>
           <Route path='/mentormanage' element={<AdminMentorManage/>}></Route>
+          <Route path='/helps' element={<Helps/>}></Route>
         </Routes>
       </BrowserRouter>
       <ToastContainer/>

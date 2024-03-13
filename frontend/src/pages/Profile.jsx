@@ -12,44 +12,42 @@ import { PropagateLoader } from "react-spinners/";
 function Profile() {
   const dispatch = useDispatch();
 
-  const { user , isSuccess, message, isError} = useSelector((state) => state.auth);
+  const { user, isSuccess, message, isError } = useSelector(
+    (state) => state.auth
+  );
 
   const { posts, isLoadingPost, isErrorPost, messagePost } = useSelector(
     (state) => state.post
   );
 
-
-
-    // State variables for edit modal
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editedUserInfo, setEditedUserInfo] = useState({
-      name: user.name,
-      university: user.university,
-      email: user.email,
-      phone: user.phone,
-    });
-
+  // State variables for edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedUserInfo, setEditedUserInfo] = useState({
+    name: user.name,
+    university: user.university,
+    email: user.email,
+    phone: user.phone,
+  });
 
   useEffect(() => {
     dispatch(getPosts());
+
+    if (!user || user === null) {
+      navigate("/");
+    }
 
     if (isErrorPost) {
       toast.error(messagePost);
     }
   }, [dispatch, isSuccess]);
 
-
-
-
   const handleSaveChanges = () => {
-    console.log(editedUserInfo)
+    console.log(editedUserInfo);
     // Dispatch action to update user profile
     dispatch(updateProfile(editedUserInfo));
     // Close the modal after saving changes
     setIsEditModalOpen(false);
   };
-
-
 
   if (isLoadingPost) {
     return (
@@ -80,9 +78,7 @@ function Profile() {
           </div>
           <div className="flex justify-between relative z-0 ">
             <div className="flex">
-              <div className="w-[380px]">
-
-              </div>
+              <div className="w-[380px]"></div>
               <div className="w-[180px] h-[180px] rounded-full overflow-hidden absolute -top-[110px] left-8 border-4 border-white">
                 <img src={user.avatar} alt="" />
               </div>
@@ -92,9 +88,10 @@ function Profile() {
               </div>
             </div>
             <div className="flex items-center">
-              <button 
-              onClick={() => setIsEditModalOpen(true)}
-              className="bg-secendoryColor hover:bg-mainColor p-3 rounded-lg text-white">
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="bg-secendoryColor hover:bg-mainColor p-3 rounded-lg text-white"
+              >
                 Edit Profile
               </button>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
@@ -61,16 +61,14 @@ function UserAvatar() {
         {/* Dropdown menu */}
         {isDropdownOpen && (
           <motion.div
-
-          initial={{
-            y:-10,
-            opacity: 0,
-          }}
-          animate={{
-            y:0,
-            opacity: 1,
-          }}
-
+            initial={{
+              y: -10,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
             id="dropdownAvatarName"
             className="z-10 absolute top-12 m-auto left-0 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-blue-950 dark:divide-gray-600"
           >
@@ -83,16 +81,30 @@ function UserAvatar() {
               aria-labelledby="dropdownAvatarNameButton"
             >
               <li>
-                <Link className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" to="/profile" >Profile</Link>
+                <Link
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to="/profile"
+                >
+                  Profile
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
-                  Settings
-                </a>
+                  Home
+                </Link>
               </li>
+              <li>
+                <Link
+                  to="/helps"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Helps
+                </Link>
+              </li>
+              
             </ul>
             <div className="py-2">
               <button
