@@ -30,6 +30,25 @@ const getUserPosts = async (token) => {
 };
 
 
+
+//update post
+
+const updatePost = async (updateData,token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.get(API_URL+"update/"+updateData.id,updateData,config);
+
+  return response.data;
+};
+
+
+
+
+
 // Get all posts
 const getAllPosts = async () => {
 

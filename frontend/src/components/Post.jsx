@@ -78,6 +78,12 @@ function Post({ allPostsDetails }) {
   }
 
 
+  const handlePostEdite = async(postId) =>{
+    
+  }
+
+
+
   return (
     <motion.div
       initial={{}}
@@ -104,6 +110,7 @@ function Post({ allPostsDetails }) {
             </div>
           </div>
           {/* Follow or remove buttons */}
+          <div className="flex flex-col gap-1">
           {postUser === user._id ? (
             <button 
             onClick={()=>{handlePostDelete(_id)}}
@@ -117,6 +124,15 @@ function Post({ allPostsDetails }) {
               Follow <IoPersonAddSharp />
             </button>
           )}
+          {postUser === user._id && (
+            <button
+            
+            className="flex justify-center items-center gap-1 text-gray-600 px-2 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:bg-gray-100"
+            >
+              Edit
+            </button>
+          )}
+          </div>
         </div>
       </div>
       <div className="p-4">

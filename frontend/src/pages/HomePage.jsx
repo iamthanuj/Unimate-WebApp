@@ -6,6 +6,8 @@ import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
 import FriendsList from "../components/FriendsList";
 import EventsTab from "../components/EventsTab";
+import CommunityList from "../components/CommunityList";
+import MentorsTab from "../components/MentorsTab";
 import { getAllPosts, postReset } from "../features/post/postSlice";
 import { PropagateLoader } from "react-spinners/";
 
@@ -29,7 +31,6 @@ function HomePage() {
     dispatch(getAllPosts());
 
     return () => {
-      8;
       dispatch(postReset());
     };
   }, [navigate, isErrorPost, isLoading, messagePost, dispatch]);
@@ -56,8 +57,14 @@ function HomePage() {
           <div className="absolute pt-[100px] left-0">
             <FriendsList />
           </div>
+          <div className="absolute pt-[100px] right-0 top-[430px]">
+            <CommunityList />
+          </div>
           <div className="absolute pt-[100px] right-0">
             <EventsTab />
+          </div>
+          <div className="absolute pt-[100px] left-0 top-[430px]">
+            <MentorsTab/>
           </div>
           <div className="pt-[100px] flex flex-col gap-14 ">
             <CreatePost />

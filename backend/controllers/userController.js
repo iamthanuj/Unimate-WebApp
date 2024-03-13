@@ -166,12 +166,23 @@ const loginUser = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async(req,res)=>{
   const id = req.user.id
 
+  const {name, university, email, phone} = req.body
+  const [firstName, lastName] = name.split(' ');
+
+  const updateData = {
+    firstName,
+    lastName,
+    university : university,
+    email: email,
+    phone:phone
+  }
+
   if(!req.body){
     res.status(400)
     throw new Error("Pleas enter value")
   }
   else{
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
       new:true
     })
 

@@ -23,7 +23,7 @@ function Profile() {
     // State variables for edit modal
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editedUserInfo, setEditedUserInfo] = useState({
-      firstName: user.name,
+      name: user.name,
       university: user.university,
       email: user.email,
       phone: user.phone,

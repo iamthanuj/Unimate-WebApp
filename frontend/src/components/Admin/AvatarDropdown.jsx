@@ -55,27 +55,35 @@ function AvatarDropdown() {
           >
             <li>
               <Link
-                to="/"
+                to="/events"
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
-                Events
+                Manage Events
               </Link>
             </li>
             <li>
               <Link
-                to=""
+                to="/usermanage"
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
-                Users
+                Manage Users
               </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/postmanage"
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
-                Earnings
-              </a>
+                Manage Posts
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/mentormanage"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Manage Mentors
+              </Link>
             </li>
           </ul>
           <div className="py-2">

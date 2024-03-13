@@ -49,6 +49,8 @@ const getAllEvents = asyncHandler(async (req, res) => {
   }
 });
 
+
+
 const editEvent = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id);
 
