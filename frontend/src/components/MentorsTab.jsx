@@ -45,7 +45,7 @@ function MentorsTab() {
     return null;
   } else {
     return (
-      <div className="bg-blue-50 w-[400px] h-[300px] fixed rounded-lg overflow-hidden shadow-lg">
+      <div className="hidden xl:block bg-blue-50 w-[400px] h-[300px] fixed rounded-lg overflow-hidden shadow-lg">
         <div className="bg-gradient-to-r from-mainColor to-secendoryColor text-white text-center">
           <p className="flex justify-center items-center gap-1 py-2">
             <BsPersonSquare /> Mentors

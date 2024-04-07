@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import SideBar from "../components/SideBar";
 import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
 import FriendsList from "../components/FriendsList";
@@ -52,7 +53,7 @@ function HomePage() {
   return (
     <div className="font-inter">
       <NavBar></NavBar>
-      <div className="container mx-auto">
+      <div className="container mx-auto px-2">
         <div className="relative flex justify-center">
           <div className="absolute pt-[100px] left-0">
             <FriendsList />

@@ -61,7 +61,7 @@ function CreatePost() {
     return null;
   } else {
     return (
-      <div className="bg-gray-50  shadow-md rounded-lg font-inter border-2 border-secendoryColor">
+      <div className="max-w-md bg-gray-50  shadow-md rounded-lg font-inter border-2 border-secendoryColor">
         <div className="flex items-center p-4 border-b border-gray-200">
           <img
             className="w-10 h-10 rounded-full mr-4 object-cover"

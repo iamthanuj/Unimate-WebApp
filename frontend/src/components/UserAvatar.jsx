@@ -40,7 +40,7 @@ function UserAvatar() {
             src={user.avatar}
             alt="user photo"
           />
-          <p className="text-[16px]">{user.name}</p>
+          <p className="hidden md:block text-[16px]">{user.name}</p>
           <svg
             className="w-2.5 h-2.5 ms-3 mr-2.5"
             aria-hidden="true"
@@ -70,7 +70,7 @@ function UserAvatar() {
               opacity: 1,
             }}
             id="dropdownAvatarName"
-            className="z-10 absolute top-12 m-auto left-0 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-blue-950 dark:divide-gray-600"
+            className="right-0 z-10 absolute top-12 m-auto md:left-0 md:right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-blue-950 dark:divide-gray-600"
           >
             <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
               <div className="font-medium">Student</div>

@@ -136,7 +136,6 @@ function EditMentorModal({ selectedMentor, onUpdate, onClose }) {
               </label>
             </div>
 
-        
             <div className="relative z-0 w-full mb-5 group">
               <label
                 htmlFor="countries"
