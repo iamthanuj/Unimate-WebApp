@@ -6,7 +6,7 @@ import { BsPersonSquare } from "react-icons/bs";
 import { FcBusinessman } from "react-icons/fc";
 import ViewMentorModal from "./ViewMentorModal";
 
-function MentorsTab() {
+function MentorsTab({tabType}) {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState(null);
 
@@ -15,13 +15,7 @@ function MentorsTab() {
   const { user } = useSelector((state) => state.auth);
   const { mentors } = useSelector((state) => state.mentor);
 
-  //   const handleAddFriend = (mentorId) => {
-  //     const friendData = {
-  //       friendId: mentorId,
-  //     };
 
-  //     dispatch(addRemoveFriend(friendData));
-  //   };
 
   useEffect(() => {
     dispatch(getMentors());
@@ -45,7 +39,7 @@ function MentorsTab() {
     return null;
   } else {
     return (
-      <div className="hidden xl:block bg-blue-50 w-[400px] h-[300px] fixed rounded-lg overflow-hidden shadow-lg">
+      <div className={tabType ? "block bg-blue-50 w-[400px] h-[300px] fixed rounded-lg overflow-hidden shadow-lg" : "hidden xl:block bg-blue-50 w-[400px] h-[300px] fixed rounded-lg overflow-hidden shadow-lg"}>
         <div className="bg-gradient-to-r from-mainColor to-secendoryColor text-white text-center">
           <p className="flex justify-center items-center gap-1 py-2">
             <BsPersonSquare /> Mentors

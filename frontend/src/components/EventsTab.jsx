@@ -5,7 +5,7 @@ import { IoCalendarNumberSharp, IoLocationSharp } from "react-icons/io5";
 import { FcCalendar } from "react-icons/fc";
 import { toast } from 'react-toastify';
 
-function EventsTab() {
+function EventsTab({tabType}) {
   const dispatch = useDispatch();
   const { events, isErrorEvent, isSuccessEvent, isLoadingEvent, messageEvent } =
     useSelector((state) => state.event);
@@ -30,7 +30,7 @@ function EventsTab() {
   };
 
   return (
-    <div className="hidden xl:block bg-blue-50 w-[400px] h-[400px] rounded-lg overflow-hidden shadow-lg">
+    <div className={tabType ? "block bg-blue-50 w-[400px] h-[400px] rounded-lg overflow-hidden shadow-lg" : "hidden xl:block bg-blue-50 w-[400px] h-[400px] rounded-lg overflow-hidden shadow-lg"}>
       <div className="bg-gradient-to-r from-mainColor to-secendoryColor text-white text-center">
         <p className="flex justify-center items-center gap-1 py-2">
           <IoCalendarNumberSharp /> Events

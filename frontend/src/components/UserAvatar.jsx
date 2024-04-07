@@ -4,13 +4,29 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
 import { Link } from "react-router-dom";
+import NavBarModal from "./NavBarModal";
+
 
 function UserAvatar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tabType, settabType] = useState("");
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
   };
+
+
+  const setTab = (type)=>{
+    settabType(type);
+    setIsModalOpen(true);
+  }
+
+  const closeModal = ()=>{
+    setIsModalOpen(false);
+  }
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,6 +37,8 @@ function UserAvatar() {
     dispatch(reset());
     navigate("/");
   };
+
+
 
   if (!user) {
     return null;
@@ -104,7 +122,30 @@ function UserAvatar() {
                   Helps
                 </Link>
               </li>
-              
+              <li className="block md:hidden">
+                <button
+                  // onClick={()=>{setTab("friends")}}
+                  className="flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Friends
+                </button>
+              </li>
+              <li className="block md:hidden">
+                <button
+                onClick={()=>{setTab("mentors")}}
+                  className="flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Mentors
+                </button>
+              </li>
+              <li className="block md:hidden">
+                <button
+                  onClick={()=>{setTab("events")}}
+                  className="flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Events
+                </button>
+              </li>
             </ul>
             <div className="py-2">
               <button
@@ -116,6 +157,7 @@ function UserAvatar() {
                 Sign out
               </button>
             </div>
+            {isModalOpen && (<NavBarModal  closeModal={closeModal} tabType = {tabType} />)}
           </motion.div>
         )}
       </div>
